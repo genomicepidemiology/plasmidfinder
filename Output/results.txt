@@ -63,3 +63,783 @@ Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaa
 
 --------------------------------------------------------------------------------
 
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+
+PlasmidFinder result file
+
+*********************************************************************************
+Plasmid_database
+*********************************************************************************
+PLASMID      IDENTITY     QUERY/HSP     CONTIG  POSITION         ACC NO.         
+=================================================================================
+IncHI1B(R27) 100.00       540/540       1       1..540           AF250878        
+_________________________________________________________________________________
+
+
+Contig Table
+-----------
+Contig 1 is IncHI1B(R27)_1_R27_AF250878
+-----------
+
+Plasmid		Note
+_________________________________________________________________________________
+IncHI1B(R27)	R27
+-----------
+
+
+Alignments as text
+_________________________________________________________________________________
+IncHI1B(R27): PERFECT MATCH, ID: 100.00%, Query/HSP Length: 540/540, Contig name: IncHI1B(R27)_1_R27_AF250878, Position: 1..540
+
+Plasmid seq:         attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       attccagaaaaccgatctctttaagctggcccagcgcctttttaaccgtggcattctggt
+
+Plasmid seq:         taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       taccgaggtgtgatgacagttggagtcgtccacgaagccgatcgaatccgatgcggtaaa
+
+Plasmid seq:         aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       aggtgctcggcagctcagccagatacaggtacagggcctgtgcggactccttacgggcca
+
+Plasmid seq:         gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gtttttgcaatgtcttcaggtagagtcgggttttaccgtcgacgcgatacagcgtattga
+
+Plasmid seq:         gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       gcttcgaatttggcttgatgatgatttttcccgtggaactgtcgtaatacgtcgattcca
+
+Plasmid seq:         ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       ccaggtgcatgtttatcgttatctgatcatctgtaccgggtattttcttaataaatgaaa
+
+Plasmid seq:         tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgttggtccgggctatacgcgtcagcgaagcatcaaagcgctctttcagttgtttatcaa
+
+Plasmid seq:         tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       tgcgcttggtatcaaacccacaaaattttgcaaactccggaaaattcagctccagctgac
+
+Plasmid seq:         cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Hit in genome:       cttctgaatcaagcggccggttagacaacgcataaacgatcccacaccatgatttgaaat
+
+
+--------------------------------------------------------------------------------
+

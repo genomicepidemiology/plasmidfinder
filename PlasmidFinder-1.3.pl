@@ -16,6 +16,7 @@ use constant PROGRAM_NAME_LONG       => 'Findes plasmids for a sequence or genom
 use constant VERSION                 => '1.3';
 
 #Global variables
+my $BLAST;
 my $BLASTALL;
 my $FORMATDB;
 my $ABRES_DB;
@@ -27,31 +28,22 @@ my %ARGV    = ('-p' => 'blastn', '-a' => '5' , '-F' => 'F');
 #Getting global variables from the command line
 &commandline_parsing();
 
-#my $BLASTALL  = "/usr/local/bin/blastall";
-#my $FORMATDB  = "/usr/local/bin/formatdb";
-#my $ABRES_DB   = "/home/data1/services/PlasmidFinder/database";       # This one should point to a directory containing the files with the antibiotic resistance genes.
-
-#&GetOptions (
-#  "d=s"     => \$AB_indput,
-#  "k=s"     => \$threshold,
-#  "i=s"     => \$InFile,
-#  "I=s"     => \$IFormat,
-#  "O=s"     => \$OFormat,
-#  "R=s"     => \$runroot,
-#  "h|help"  => \$Help               # Prints the help text
-#);
-
 if (defined $Help || not defined $AB_indput || not defined $InFile || not defined $threshold) {
    print_help();
    exit;
 }
 
-#If there are not given a path to the different databases and BLAST the program assume that the files are located as downloaded from the webside
-if (not defined $BLASTALL or not defined $FORMATDB or not defined $ABRES_DB or not defined $dir) {
+#If there are not given a path to the database or BLAST the program assume that the files are located in the curet directury
+if (not defined $BLAST) {
    $BLASTALL = "blast-2.2.26/bin/blastall";
    $FORMATDB = "blast-2.2.26/bin/formatdb";
-   $ABRES_DB = "database";
-   $dir = "Output";
+}
+if (not defined $ABRES_DB) {
+  $ABRES_DB = "database";
+}
+if (not defined $dir) {
+  mkdir "output";
+  $dir = "output";
 }
 
 #---------------------------------------------------------------------
@@ -1025,27 +1017,24 @@ sub commandline_parsing {
             shift @ARGV;
             shift @ARGV;
         }
-        elsif ($ARGV[0] =~ m/^-blast$/) {
-            $BLASTALL = $ARGV[1];
+        elsif ($ARGV[0] =~ m/^-b$/) {
+            $BLAST = $ARGV[1];
+			$BLASTALL = "$BLAST/bin/blastall";
+            $FORMATDB = "$BLAST/bin/formatdb";
             shift @ARGV;
             shift @ARGV;
         }
-        elsif ($ARGV[0] =~ m/^-format$/) {
-            $FORMATDB = $ARGV[1];
-            shift @ARGV;
-            shift @ARGV;
-        }
-        elsif ($ARGV[0] =~ m/^-o$/) {
+        elsif ($ARGV[0] =~ m/^-p$/) {
             $AB_indput = $ARGV[1];
             shift @ARGV;
             shift @ARGV;
         }
-        elsif ($ARGV[0] =~ m/^-file$/) {
+        elsif ($ARGV[0] =~ m/^-i$/) {
             $InFile = $ARGV[1];
             shift @ARGV;
             shift @ARGV;
         }
-        elsif ($ARGV[0] =~ m/^-outdir$/) {
+        elsif ($ARGV[0] =~ m/^-o$/) {
             $dir = $ARGV[1];
             shift @ARGV;
             shift @ARGV;
@@ -1226,65 +1215,49 @@ NAME
   $ProgName - $ProgNameLong
 
 SYNOPSIS
-  $ProgName -d [Antimicrobial] [Options] < [File]
-     or
-  $ProgName -d [Antimicrobial] -i [File] [Options]
+  $ProgName [Options]
 
 DESCRIPTION
-  Calculates antibiotic resistance genes based on a BLAST alignment of the input
-  sequence file and the specified allele set. If possible the ST will be
-  given, or if unknown, that field will be left empty
-
-        Notice that although the options mimic that the input sequences are
-  aligned against the alleles, it is in fact the other way around. First,
-  the input is converted to a blast database, against which is aligned the
-  alleles from the species specified with '-d'.
-
-  Notice also that the default options for BLAST are changed to suit the
-  PlasmidFinder alignment. Although the user can change the arguments just as if he
-  was running blastall directly, this is the command line used as default
-  in this script:
-
-        $BLASTALL $CMD
-
-  These defaults can be overridden by giving them as arguments to this
-  script, although it will likely break if anything other than '-a' is
-  changed. Example:
-
-  $ProgName -a 10 -i [File] -d [Antimicrobial Database]
+  The PlasmidFinder Web tool is based on a curated database of plasmid replicons intended for the identification
+  of plasmids in whole-genome sequences originating from Enterobacteriaceae species by microbiologists without
+  specialized bioinformatics skills using direct high-throughput raw reads, assembled contigs, or
+  assembled Sanger sequences. PlasmidFinder not only provides the detection of replicons in the WGS
+  but also assigns the plasmids under study to lineages that trace back the information to the existing
+  knowledge on Inc groups and suggests possible reference plasmids for each lineage.
+  Other plasmid-databases are under construction and the plasmid-databse used is specified with '-p'.
 
 OPTIONS
-  Most options are simply forwarded to the call to BLAST. A few are unique
-  to this script and a few blast arguments deserve special mention.
 
-     -d [Antimicrobial database]
-  The antibiotic for which the resistance gene should be calculated.
-  Should follow a simple format, e.g. tetracycline, macrolide, etc. These are
-  in fact the core names of a .fsa located in the database directory:
+    -h HELP
+                    Prints a message with options and information to the screen
+    -d DATABSE
+                    The path to where you have located the database folder
+    -b BLAST
+                    The path to the location of blast-2.2.26
+    -i INFILE
+                    Your input file which needs to be preassembled partial or complete genomes in fasta format
+    -o OUTFOLDER
+                    The folder you want to have your output files places. If not specified the program will
+                    create a folder named 'output' in which the result files will be stored.
+    -p PLASMID_DATBASE
+                    The database you want to search for the plasmids in. Choose ehiter plasmid_database,
+                    plasmid_positiv or both (plasmid_database,plasmid_positiv)
+    -k  THRESHOLD
+                    The threshold for % identity for example '95.00' for 95 %
 
-  $ABRES_DB
+Example of use with the *database* and *blast-2.2.26* folder loacted in the current directory
+    
+    perl PlasmidFinder-1.3.pl -i INFILE.fasta -o OUTFOLDER -p plasmid_database -k 95.00
 
-     -I [Format]
-  Specify the sequence format of the input file.
-  If the input file is in another format than fasta, this can be specified
-  here. Most BioPerl sequence formats are supported.
-  Default is 'fasta'
+Example of use with the *database* and *blast-2.2.26* folder loacted in antoher directory
 
-     -O [Format]
-  Specifies the format of the output.
-  If left unspecified (the default), the ST is given along with the
-  corresponding allele numbers in a tabbed format. If set to a sequence
-  format, e.g. 'tab' or 'fasta', the sequence of the alleles will instead
-  be outputted in the requested format.
-
-     -h or --help
-  Prints this text.
-
+    perl PlasmidFinder-1.3.pl -d path/to/database -b path/to/blast-2.2.26 -i INFILE.fasta -o OUTFOLDER -p plasmid_database -k 95.00
+    
 VERSION
     Current: $Version
 
 AUTHORS
-    Carsten Friis, carsten\@cbs.dtu.dk, Mette Voldby Larsen, metteb\@cbs.dtu.dk, Ea Stilling
+	Carattoli A, Zankari E, Garcia-Fernandez A, Volby Larsen M, Lund O, Villa L, Aarestrup FM, Hasman H.
 
 EOH
 }

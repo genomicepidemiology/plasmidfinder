@@ -35,8 +35,8 @@ if (defined $Help || not defined $AB_indput || not defined $InFile || not define
 
 #If there are not given a path to the database or BLAST the program assume that the files are located in the curet directury
 if (not defined $BLAST) {
-   $BLASTALL = "blast-2.2.26/bin/blastall";
-   $FORMATDB = "blast-2.2.26/bin/formatdb";
+   $BLASTALL = "blastall";
+   $FORMATDB = "formatdb";
 }
 if (not defined $ABRES_DB) {
   $ABRES_DB = "database";
@@ -1230,26 +1230,30 @@ OPTIONS
 
     -h HELP
                     Prints a message with options and information to the screen
-    -d DATABSE
+    -d DATABASE
                     The path to where you have located the database folder
     -b BLAST
-                    The path to the location of blast-2.2.26
+                    The path to the location of blast-2.2.26 if it is not added
+                    to the user's path (see the install guide in 'README.md')
     -i INFILE
-                    Your input file which needs to be preassembled partial or complete genomes in fasta format
+                    Your input file which needs to be preassembled partial
+                    or complete genomes in fasta format
     -o OUTFOLDER
-                    The folder you want to have your output files places. If not specified the program will
-                    create a folder named 'output' in which the result files will be stored.
+                    The folder you want to have your output files places.
+                    If not specified the program will create a folder named
+                    'Output' in which the result files will be stored.
     -p PLASMID_DATBASE
-                    The database you want to search for the plasmids in. Choose ehiter plasmid_database,
-                    plasmid_positiv or both (plasmid_database,plasmid_positiv)
+                    The database you want to search for the plasmids in.
+                    Choose ehiter plasmid_database, plasmid_positiv
+                    or both (plasmid_database,plasmid_positiv)
     -k  THRESHOLD
                     The threshold for % identity for example '95.00' for 95 %
 
-Example of use with the *database* and *blast-2.2.26* folder loacted in the current directory
+Example of use with the 'database' folder located in the current directory and Blast added to the user's path
     
     perl PlasmidFinder-1.3.pl -i INFILE.fasta -o OUTFOLDER -p plasmid_database -k 95.00
 
-Example of use with the *database* and *blast-2.2.26* folder loacted in antoher directory
+Example of use with the 'database' and 'blast-2.2.26' folders loacted in other directories
 
     perl PlasmidFinder-1.3.pl -d path/to/database -b path/to/blast-2.2.26 -i INFILE.fasta -o OUTFOLDER -p plasmid_database -k 95.00
     

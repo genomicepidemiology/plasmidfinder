@@ -1,5 +1,5 @@
 ===================
-MLST
+PlasmidFinder
 ===================
 
 This project documents PlasmidFinder service
@@ -79,7 +79,7 @@ Options:
                     The path to where you have located the database folder
     -b BLAST
                     The path to the location of blast-2.2.26 if it is not added
-                    to the user's path (see the install guide in 'README.md')
+                    to the users path (see the install guide in 'README.md')
     -i INFILE
                     Your input file which needs to be preassembled partial
                     or complete genomes in fasta format

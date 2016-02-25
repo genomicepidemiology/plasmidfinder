@@ -10,6 +10,7 @@ use File::Temp qw/ tempfile tempdir /;
 use Bio::SeqIO;
 use Bio::Seq;
 use Bio::SearchIO;
+use Try::Tiny::Retry;
 
 use constant PROGRAM_NAME            => 'PlasmidFinder-1.3.pl';
 use constant PROGRAM_NAME_LONG       => 'Findes plasmids for a sequence or genome';
@@ -88,12 +89,18 @@ foreach my $element(@Antimicrobial){
   # print "$element\n";
   $antibiocount ++;
   my $CurrentAnti = $element;
+  
   # Run BLAST and find best matching Alleles
-  my $Seqs_ABres   = read_seqs(-file => $ABRES_DB.'/'.$element.'.fsa', format => 'fasta');  
-  my $Seqs_input  = $InFile ne "" ? read_seqs(-file => $InFile, -format => $IFormat) : 
+  my ($Seqs_ABres, $Seqs_input, @Blast_lines);
+  
+  retry{
+      $Seqs_ABres   = read_seqs(-file => $ABRES_DB.'/'.$element.'.fsa', format => 'fasta');  
+      $Seqs_input  = $InFile ne "" ? read_seqs(-file => $InFile, -format => $IFormat) : 
                                   read_seqs(-fh => \*STDIN,   -format => $IFormat);
-
-  my @Blast_lines = get_blast_run(-d => $Seqs_input, -i => $Seqs_ABres, %ARGV);
+   
+      @Blast_lines = get_blast_run(-d => $Seqs_input, -i => $Seqs_ABres, %ARGV)
+   }
+   catch{ die $_ };
  
   # Declaring variables for each BLAST
   #Declaring variables - array and hash
@@ -969,7 +976,7 @@ foreach my $key (sort keys %GENE_RESULTS_HASH2) {
 }#end foreach
   
 		#WRITING standard_output.txt
-open (TXTRESULTS, '>>'."$dir/results.txt") or die("Error! Could not write to results.txt");
+open (TXTRESULTS, '>'."$dir/results.txt") or die("Error! Could not write to results.txt");
 print TXTRESULTS $txtresults;
 print TXTRESULTS $contigtable;
 print TXTRESULTS $Plasmidtable;
@@ -977,17 +984,17 @@ print TXTRESULTS $alignment;
 close (TXTRESULTS);
 #print $txtresults; #printing to screen	
 
-open (TABR, '>'."$dir/results_tab.txt") || die("Error! Could not write to results_tab.txt");
+open (TABR, '>'."$dir"."/results_tab.txt") || die("Error! Could not write to results_tab.txt");
 print TABR $tabr;
 close (TABR);
 
 	#WRITING Hit_in_genome_seq.fsa
-open (HIT, '>'."$dir/Hit_in_genome_seq.fsa") || die("Error! Could not write to Hit_in_genome_seq.fsa");
+open (HIT, '>'."$dir"."/Hit_in_genome_seq.fsa") || die("Error! Could not write to Hit_in_genome_seq.fsa");
 print HIT $hits_in_seq;
 close (HIT);
 
 #WRITING Virulence_gene_seq.fsa
-open (ALLELE, '>'."$dir/Plasmid_seq.fsa") || die("Error! Could not write to Plasmid_seq.fsa");
+open (ALLELE, '>'."$dir"."/Plasmid_seq.fsa") || die("Error! Could not write to Plasmid_seq.fsa");
 print ALLELE $resalign;
 close (ALLELE);
 
@@ -1036,6 +1043,7 @@ sub commandline_parsing {
         }
         elsif ($ARGV[0] =~ m/^-o$/) {
             $dir = $ARGV[1];
+            mkdir $dir;
             shift @ARGV;
             shift @ARGV;
         }
@@ -1057,13 +1065,11 @@ sub get_blast_run {
   output_sequence(-fh => $fh, seqs => delete $args{-d}, -format => 'fasta');
   die "Error! Could not build blast database" if (system("$FORMATDB -p F -i $file")); 
   my $query_file = $file.".blastpipe";
-  #`mknod $query_file p`;
-  if ( !fork() ) {
-    open QUERY, ">> $query_file" || die("Error! Could not perform blast run");
-    output_sequence(-fh => \*QUERY, seqs => $args{-i}, -format => 'fasta');
-    close QUERY;
-    exit(0);
-  }
+  
+  open QUERY, ">> $query_file" || die("Error! Could not perform blast run");
+  output_sequence(-fh => \*QUERY, seqs => $args{-i}, -format => 'fasta');
+  close QUERY;
+  
   delete $args{-i};
   my $cmd = join(" ", %args);
   my ($fh2, $file2) = tempfile( DIR => '/tmp', UNLINK => 1); 
@@ -1234,29 +1240,29 @@ OPTIONS
                     The path to where you have located the database folder
     -b BLAST
                     The path to the location of blast-2.2.26 if it is not added
-                    to the user's path (see the install guide in 'README.md')
+                    to the users path (see the install guide in 'README.md')
     -i INFILE
                     Your input file which needs to be preassembled partial
                     or complete genomes in fasta format
     -o OUTFOLDER
                     The folder you want to have your output files places.
-                    If not specified the program will create a folder named
-                    'Output' in which the result files will be stored.
+                    If not specified the program store the output in your
+                    current directory.
     -p PLASMID_DATBASE
                     The database you want to search for the plasmids in.
                     Choose ehiter plasmid_database, plasmid_positiv
                     or both (plasmid_database,plasmid_positiv)
     -k  THRESHOLD
                     The threshold for % identity for example '95.00' for 95 %
+                    
+Example of use with the *database* folder located in the current directory
 
-Example of use with the 'database' folder located in the current directory and Blast added to the user's path
-    
-    perl PlasmidFinder-1.3.pl -i INFILE.fasta -o OUTFOLDER -p plasmid_database -k 95.00
+    PlasmidFinder.pm -i test.fsa -p plasmid_database -k 95.00
 
-Example of use with the 'database' and 'blast-2.2.26' folders loacted in other directories
+Example of use with the *database* loacted in another directory and a specified output folder
 
-    perl PlasmidFinder-1.3.pl -d path/to/database -b path/to/blast-2.2.26 -i INFILE.fasta -o OUTFOLDER -p plasmid_database -k 95.00
-    
+    PlasmidFinder.pm -d path/to/database -i test.fsa -o OUTFOLDER -p plasmid_database -k 95.00
+
 VERSION
     Current: $Version
 

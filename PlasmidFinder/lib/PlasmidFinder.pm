@@ -123,11 +123,11 @@ foreach my $element(@Antimicrobial){
   my ($Seqs_ABres, $Seqs_input, @Blast_lines);
   
   retry{
-      my $Seqs_ABres   = read_seqs(-file => $ABRES_DB.'/'.$element.'.fsa', format => 'fasta');  
-      my $Seqs_input  = $InFile ne "" ? read_seqs(-file => $InFile, -format => $IFormat) : 
+      $Seqs_ABres   = read_seqs(-file => $ABRES_DB.'/'.$element.'.fsa', format => 'fasta');  
+      $Seqs_input  = $InFile ne "" ? read_seqs(-file => $InFile, -format => $IFormat) : 
                                   read_seqs(-fh => \*STDIN,   -format => $IFormat);
    
-      my @Blast_lines = get_blast_run(-d => $Seqs_input, -i => $Seqs_ABres, %ARGV)
+      @Blast_lines = get_blast_run(-d => $Seqs_input, -i => $Seqs_ABres, %ARGV)
    }
    catch{ die $_ };
  

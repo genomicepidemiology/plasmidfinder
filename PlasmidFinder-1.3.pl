@@ -39,12 +39,13 @@ if (not defined $BLAST) {
    $BLASTALL = "blastall";
    $FORMATDB = "formatdb";
 }
+
 if (not defined $ABRES_DB) {
   $ABRES_DB = "database";
 }
+
 if (not defined $dir) {
-  mkdir "output";
-  $dir = "output";
+  $dir = ".";
 }
 
 #---------------------------------------------------------------------

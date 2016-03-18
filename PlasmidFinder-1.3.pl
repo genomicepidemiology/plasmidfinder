@@ -1250,8 +1250,8 @@ OPTIONS
                     current directory.
     -p PLASMID_DATBASE
                     The database you want to search for the plasmids in.
-                    Choose ehiter plasmid_database, plasmid_positiv
-                    or both (plasmid_database,plasmid_positiv)
+                    See the config file for details about the available
+                    databases. Separate multiple database prefixes with comma
     -k  THRESHOLD
                     The threshold for % identity for example '95.00' for 95 %
                     

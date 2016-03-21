@@ -999,8 +999,6 @@ open (ALLELE, '>'."$dir"."/Plasmid_seq.fsa") || die("Error! Could not write to P
 print ALLELE $resalign;
 close (ALLELE);
 
-
-print STDERR "Done\n";
 exit;
 
 

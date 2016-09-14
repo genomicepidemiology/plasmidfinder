@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+''' Validate Database '''
+import sys, os
+
+if len(sys.argv) > 1:
+   db_path = sys.argv[1]
+else:
+   print('Current path: %s'%(os.getcwd()))
+   db_path = input('Please provide the path to the database:')
+
+# VALIDATE REQUIRED ARGUMENTS
+if not os.path.exists(db_path):
+   sys.exit("Error: The specified database directory does not exist!\n")
+else:
+   # Check existence of config file
+   db_config_file = '%s/config'%(db_path)
+   if not os.path.exists(db_config_file):
+      sys.exit("Error: The database config file could not be found!")
+
+dbs = []
+extensions = []
+with open(db_config_file) as f:
+   for l in f:
+      l = l.strip()
+      if l == '': continue
+      if l[0] == '#':
+         if 'important files are:' in l:
+            files = ["%s/%s"%(db_path, s.strip())
+                     for s in l.split('are:')[-1].split(',')]
+            # Check all files exist
+            for path in files:
+               if not os.path.exists(path):
+                  sys.exit('Error: %s not found!'%(path))
+         if 'extensions:' in l:
+            extensions = [s.strip() for s in l.split('extensions:')[-1].split(',')]
+         continue
+      tmp = l.split('\t')
+      if len(tmp) != 3:
+         sys.exit(("Error: Invalid line in the database config file!\n"
+                   "A proper entry requires 3 tab separated columns!\n%s")%(l))
+      db_prefix = tmp[0].strip()
+      name = tmp[1].split('#')[0]
+      description = tmp[2]
+      # Check if all db files are present
+      for ext in extensions:
+         path = "%s/%s.%s"%(db_path, db_prefix, ext)
+         if not os.path.exists(path):
+            sys.exit(("Error: The database file (%s) could not be found!")%(
+               path))
+      dbs.append((name, db_prefix))
+
+if len(dbs) == 0:
+   sys.exit("Error: No databases were found in the database config file!")
+else:
+   print("Validation passed. Database is valid.")

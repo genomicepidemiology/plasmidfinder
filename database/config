@@ -1,5 +1,0 @@
-# Database configuration file - Describes the content of the database
-# Each db consist of 1 file(s) with the following extensions: fsa
-#db_prefix	name	description
-plasmid_database	Enterobacteriaceae	plasmid database for Enterobacteriaceae
-plasmid_positiv	Gram positive	plasmid database for gram positive bacteria

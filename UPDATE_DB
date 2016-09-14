@@ -1,0 +1,33 @@
+#!/bin/bash
+# INPUT: path_to_db_dir
+
+# Check if the user provided the input
+if [ -z "$1" ]; then
+   cwd=$(pwd)
+   echo "Current path: "$cwd
+   echo "Type the path to where the database is located, followed by [ENTER]:"
+   read path
+else
+   path=$1
+fi
+
+# Check if the path is valid and existing
+if [ -d $path ]; then
+   cd $path
+   #git stash
+   git pull
+else
+   echo "Error: path does not exist! Please provide a valid path..."
+fi
+
+echo "Do you want to fix permissions, yes/y or no/n, followed by [ENTER]:"
+read fix
+if [[ $fix = "yes" ]] || [[ $fix -eq "y" ]]; then
+   echo "enter group name followed by [ENTER]:"
+   read gn
+   if [ ! -z "$gn" ]; then
+      chgrp -R $gn $path
+   fi
+   find $path \( -name .git \) -prune -printf '' -o -type d -print -exec chmod 775 {} \;
+   find $path \( -name .git \) -prune -printf '' -o -type f -print -exec chmod 664 {} \;
+fi

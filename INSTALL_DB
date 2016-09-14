@@ -1,0 +1,29 @@
+#!/bin/bash
+# INPUT: path_to_db
+
+# Check if the user provided the input
+if [ -z "$1" ]; then
+   echo "Provide a path to or a name for the database, followed by [ENTER]:"
+   read path
+else
+   path=$1
+fi
+
+# Check if the path is valid and unexisting
+if [ ! -d $path ]; then
+   git clone http://compare.cbs.dtu.dk:10080/CGE/plasmidfinder_db.git $path
+else
+   echo "Error: path exists! Please provide a valid and unused path..."
+fi
+
+echo "Do you want to fix permissions, yes/y or no/n, followed by [ENTER]:"
+read fix
+if [[ $fix = "yes" ]] || [[ $fix -eq "y" ]]; then
+   echo "enter group name followed by [ENTER]:"
+   read gn
+   if [ ! -z "$gn" ]; then
+      chgrp -R $gn $path
+   fi
+   find $path \( -name .git \) -prune -printf '' -o -type d -print -exec chmod 775 {} \;
+   find $path \( -name .git \) -prune -printf '' -o -type f -print -exec chmod 664 {} \;
+fi

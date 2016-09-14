@@ -45,7 +45,8 @@ if (not defined $ABRES_DB) {
 }
 
 if (not defined $dir) {
-  $dir = ".";
+  mkdir "output";
+  $dir = "output";
 }
 
 #---------------------------------------------------------------------

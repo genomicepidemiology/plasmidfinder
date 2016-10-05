@@ -49,6 +49,10 @@ if (not defined $dir) {
   $dir = "output";
 }
 
+# Making tmp directory for BLST output
+my $tmp_dir = "$dir/tmp";
+mkdir("$dir/tmp");
+
 #---------------------------------------------------------------------
 
 # %% Main Program %%
@@ -57,11 +61,11 @@ if (not defined $dir) {
   # hash mapping the ARGF profiles to antibiotic names
 my %argfProfiles=();
 ##################### Antimicrobial familyes ################# ="Aminoglycoside";
-$argfProfiles{"plasmid_database"} = "PlasmidFinder - Enterobacteriaceae";
-$argfProfiles{"plasmid_test_hhas"} = "PlasmidFinder - TEST HHAS";
-$argfProfiles{"plasmid_test_fmaa"} = "PlasmidFinder - TEST FMAA";
-$argfProfiles{"plasmid_test_kagjo"} = "PlasmidFinder - TEST KAGJO";
-$argfProfiles{"plasmid_positiv"} = "PlasmidFinder - Gram-positiv";
+$argfProfiles{"enterobacteriaceae"} = "PlasmidFinder - Enterobacteriaceae";
+$argfProfiles{"hhas"} = "PlasmidFinder - TEST HHAS";
+$argfProfiles{"fmaa"} = "PlasmidFinder - TEST FMAA";
+$argfProfiles{"kagjo"} = "PlasmidFinder - TEST KAGJO";
+$argfProfiles{"gram_positiv"} = "PlasmidFinder - Gram-positiv";
 $argfProfiles{"rm"} = "Restricion modification";
 # -----------------------
 
@@ -74,6 +78,7 @@ my %FINAL_RESULTS; # will contain the results for txt printing
 
 ### Variables for text-printing ###
 my $txtresults= "PlasmidFinder result file\n\n"; #Added to txt print
+my $tableresult = "";
 my $tabr .= "Plasmid\tIdentity\tQuery/HSP\tContig\tPosition in contig\tNote\tAccession no.\n"; #added to print tab-separated txt file
 my  $contigtable ="\nContig Table\n"; #added to txt print
 $contigtable .= "-----------\n";
@@ -100,7 +105,7 @@ foreach my $element(@Antimicrobial){
       $Seqs_input  = $InFile ne "" ? read_seqs(-file => $InFile, -format => $IFormat) : 
                                   read_seqs(-fh => \*STDIN,   -format => $IFormat);
    
-      @Blast_lines = get_blast_run(-d => $Seqs_input, -i => $Seqs_ABres, %ARGV)
+      @Blast_lines = get_blast_run($tmp_dir, $element, -d => $Seqs_input, -i => $Seqs_ABres, %ARGV)
    }
    catch{ die $_ };
  
@@ -897,15 +902,24 @@ foreach my $element(@Antimicrobial){
   }
 =cut print "\n";
   
-   ## Making a hash with results for txt printing WORKS
-  foreach my $key (sort keys %GENE_RESULTS_HASH) {
-    my $array = $GENE_RESULTS_HASH{$key};   
-    $FINAL_RESULTS{$key}= [@$array[9], @$array[1], @$array[2], @$array[3],  @$array[4], @$array[5], @$array[8], $CurrentAnti];
-    $Plasmidtable .= @$array[9]."\t".@$array[7]."\n";
-    $Plasmidtable .= "-----------\n";
-    $tabr .= @$array[9]."\t".@$array[1]."\t".@$array[2]."/".@$array[3]."\t".@$array[4]."\t".@$array[5]."\t".@$array[7]."\t".@$array[8]."\n";
-    
-  } 
+   if (!%GENE_RESULTS_HASH) {
+      $tableresult .= $argfProfiles{"$AB_indput"}."\nNo plasmid replicons found.\n"
+   }
+   else {
+      $tableresult .= $argfProfiles{"$AB_indput"}. "\nPlasmid\tIdentity\tQuery/HSP\tContig\tPosition in contig\tNote\tAccession no.\n"; #added to print tab-separated txt file
+   
+   }
+      ## Making a hash with results for txt printing WORKS
+   foreach my $key (sort keys %GENE_RESULTS_HASH) {
+      my $array = $GENE_RESULTS_HASH{$key};   
+      $FINAL_RESULTS{$key}= [@$array[9], @$array[1], @$array[2], @$array[3],  @$array[4], @$array[5], @$array[8], $CurrentAnti];
+      $Plasmidtable .= @$array[9]."\t".@$array[7]."\n";
+      $Plasmidtable .= "-----------\n";
+      
+      $tableresult .= @$array[9]."\t".@$array[1]."\t".@$array[2]."/".@$array[3]."\t".@$array[4]."\t".@$array[5]."\t".@$array[7]."\t".@$array[8]."\n";
+      $tabr .= @$array[9]."\t".@$array[1]."\t".@$array[2]."/".@$array[3]."\t".@$array[4]."\t".@$array[5]."\t".@$array[7]."\t".@$array[8]."\n";
+   
+   }
 } # End foreach my $element(@Antimicrobial){
 
 my $contigcount = 0; ## To give the contig numbers and put the real contig names in a table
@@ -944,6 +958,10 @@ foreach my $key (sort keys %GENE_RESULTS_HASH2) {
 	  
   my $array = $GENE_RESULTS_HASH2{$key}; 
   my $outStr = @$array[7];
+  my $hspLen = @$array[3];
+  my $qStart = @$array[6];
+  my $qEnd = $qStart + $hspLen - 1;
+  
     #my $matchAll = lc(@$array[5]);
   if (@$array[0] eq "perfect" ){
 	 $outStr .= ": PERFECT MATCH, "; 
@@ -954,8 +972,8 @@ foreach my $key (sort keys %GENE_RESULTS_HASH2) {
   elsif (@$array[0] eq "warning2"){
     $outStr = $outStr.": WARNING2, "; 
   }  
-  $alignment .= $outStr."ID: ".@$array[1]."%, Query/HSP Length: ".@$array[3]."/".@$array[2]. ", Contig name: ".@$array[4].", Position: ".@$array[5]."\n\n";
-  $hits_in_seq .= ">".$outStr."ID: ".@$array[1]."%, Query/HSP Length: ".@$array[3]."/".@$array[2]. ", Contig name: ".@$array[4].", Position: ".@$array[5]."\n"; #måske forkert text
+  $alignment .= $outStr."ID: ".@$array[1]."%, Query/HSP Length: ".@$array[2]."/".@$array[3]. ", Contig name: ".@$array[4].", Position: ".@$array[5]."\n\n";
+  $hits_in_seq .= ">".$outStr."ID: ".@$array[1]."%, Query/HSP Length: ".@$array[2]."/".@$array[3]. ",  Positions in reference: ".$qStart."..".$qEnd.", Contig name: ".@$array[4].", Position: ".@$array[5]."\n"; #måske forkert text
   $resalign .= ">".@$array[7]."\n";
 
 	 #now print the alleles
@@ -986,6 +1004,12 @@ print TXTRESULTS $alignment;
 close (TXTRESULTS);
 #print $txtresults; #printing to screen	
 
+# Print table results
+open (TABLER, '>'."$dir"."/results_table.txt") || die("Error! Could not write to results_table.txt");
+print TABLER $tableresult;
+close (TABLER);
+
+# Print tab results
 open (TABR, '>'."$dir"."/results_tab.txt") || die("Error! Could not write to results_tab.txt");
 print TABR $tabr;
 close (TABR);
@@ -1059,59 +1083,61 @@ sub commandline_parsing {
 }
 
 sub get_blast_run {
-  my %args        = @_;
-  my ($fh, $file) = tempfile( DIR => '/tmp', UNLINK => 1); 
-  #print "\ntemp filename: $file\n";
-  output_sequence(-fh => $fh, seqs => delete $args{-d}, -format => 'fasta');
-  die "Error! Could not build blast database" if (system("$FORMATDB -p F -i $file")); 
-  my $query_file = $file.".blastpipe";
-  
-  open QUERY, ">> $query_file" || die("Error! Could not perform blast run");
-  output_sequence(-fh => \*QUERY, seqs => $args{-i}, -format => 'fasta');
-  close QUERY;
-  
-  delete $args{-i};
-  my $cmd = join(" ", %args);
-  my ($fh2, $file2) = tempfile( DIR => '/tmp', UNLINK => 1); 
-  #print "\ntemp filename: $file2\n";
-  print $fh2 `$BLASTALL -d $file -i $query_file $cmd`;
-  close $fh2;
-  #system("$BLASTALL -d $file -i $query_file $cmd > $file2");
-  #system ("echo -d $file -i $query_file $cmd ");
-  my $report = new Bio::SearchIO(
-         -file => $file2,
-              -format => "blast"); 
-# Go through BLAST reports one by one, evt. array in array...              
-my @blast;
-while(my $result = $report->next_result) {
-   # Go through each matching sequence
-   while(my $hit = $result->next_hit)    { 
-      # Go through each HSP for this sequence
-        while (my$hsp = $hit->next_hsp)  { 
-            push(@blast, 
-      $result->query_accession . "\t" . 
-      $result->query_length . "\t" . 
-      $hsp->hsp_length . "\t" . 
-      $hsp->gaps . "\t" . 
-      $hsp->percent_identity .  "\t" .  
-      $hsp->evalue . "\t" . 
-      $hsp->bits . "\t" . 
-      $hsp->query_string ."\t" . 
-      $hsp->hit_string ."\t" . 
-      $hsp->homology_string . "\t" . 
-      $hsp->seq_inds . "\t" .
-      $hsp->strand('hit') . "\t" .
-      $hsp->start('hit') . "\t" .
-      $hsp->end('hit') . "\t" .
-      $hit->name . "\t" .
-      $hsp->strand('query') . "\t" .
-      $hsp->start('query') . "\n");
+  my ($tmp_dir, $el, %args)        = @_;
+   #my $fh = $tmp_dir;
+   my $file = "blast_$el.fsa";
+   #my ($fh, $file) = tempfile( DIR => '/tmp', UNLINK => 1);
+   output_sequence(-file => ">$tmp_dir/$file", seqs => delete $args{-d}, -format => 'fasta');
+   die "Error! Could not build blast database" if (system("$FORMATDB -p F -i $tmp_dir/$file"));
+   system("rm -r formatdb.log");
+   system("rm -r  $tmp_dir/$file.n*");
+   my $query_file = "$file.blastpipe";
+
+   #open QUERY, ">> $query_file" || die("Error! Could not perform blast run");
+   output_sequence(-file => ">$tmp_dir/$query_file", seqs => $args{-i}, -format => 'fasta');
+   #close QUERY;
+   
+   delete $args{-i};
+
+   my $cmd = join(" ", %args);
+   my $file2 = "$tmp_dir/$file.blast_output";
+   system("$BLASTALL -d $tmp_dir/$file -i $tmp_dir/$query_file -o $file2 $cmd");
+
+   my $report = new Bio::SearchIO( -file   => $file2,
+                                   -format => "blast"
+                                 );
+   # Go through BLAST reports one by one, evt. array in array...              
+   my @blast;
+   while(my $result = $report->next_result) {
+      # Go through each matching sequence
+      while(my $hit = $result->next_hit)    { 
+         # Go through each HSP for this sequence
+         while (my$hsp = $hit->next_hsp)  { 
+               push(@blast, 
+         $result->query_accession . "\t" . 
+         $result->query_length . "\t" . 
+         $hsp->hsp_length . "\t" . 
+         $hsp->gaps . "\t" . 
+         $hsp->percent_identity .  "\t" .  
+         $hsp->evalue . "\t" . 
+         $hsp->bits . "\t" . 
+         $hsp->query_string ."\t" . 
+         $hsp->hit_string ."\t" . 
+         $hsp->homology_string . "\t" . 
+         $hsp->seq_inds . "\t" .
+         $hsp->strand('hit') . "\t" .
+         $hsp->start('hit') . "\t" .
+         $hsp->end('hit') . "\t" .
+         $hit->name . "\t" .
+         $hsp->strand('query') . "\t" .
+         $hsp->start('query') . "\n");
+         } 
       } 
-   } 
-}
-unlink 'formatdb.log', 'error.log', "$file.blastpipe" , "$file.nhr" , "$file.nin" , "$file.nsq";
-#system("rm -rf formatdb.log error.log");
-return @blast;
+   }
+   #system("rm -rf formatdb.log error.log");
+   system("rm -r  $tmp_dir/$file");
+   system("rm -r  $tmp_dir/$query_file");
+   return @blast;
 }
 
 ###################################
@@ -1189,21 +1215,22 @@ sub Getting_gaps {
 #   The filehandle and filename
 
 sub output_sequence {
-  my %args = @_;
-  my $seqs_ref = delete $args{seqs};
-  my $i = 1;
-  $args{-fh} = \*STDOUT unless (exists $args{-fh} or exists $args{-file});
-  if (exists $args{tempdir}) {
-    my $tempdir = delete $args{tempdir};
-    ($args{-fh}, $args{-file}) = tempfile(DIR => $tempdir, SUFFIX => ".".$args{-format})
-  }
-  my $file = delete $args{-file} if (exists $args{-fh} && exists $args{-file}); # Stupid BioPerl cannot handle that both might be set...
-  my $seq_out = Bio::SeqIO->new(%args);
-  $args{-file} = $file if (defined $file);
-  for my $seq (@{ $seqs_ref }) {
-    $seq_out->write_seq($seq);
-  }
-  return ($args{-fh}, $args{-file});
+   my %args = @_;
+   my $seqs_ref = delete $args{seqs};
+   my $i = 1;
+   #$args{-fh} = \*STDOUT unless (exists $args{-fh} or exists $args{-file});
+   #if (exists $args{tempdir}) {
+   #   my $tempdir = delete $args{tempdir};
+   #   ($args{-fh}, $args{-file}) = tempfile(DIR => $tempdir, SUFFIX => ".".$args{-format})
+   #}
+   my $file = delete $args{-file} if (exists $args{-fh} && exists $args{-file}); # Stupid BioPerl cannot handle that both might be set...
+   print %args;
+   my $seq_out = Bio::SeqIO->new(%args);
+   $args{-file} = $file if (defined $file);
+   for my $seq (@{ $seqs_ref }) {
+      $seq_out->write_seq($seq);
+   }
+   return ($args{-fh}, $args{-file});
 }
 
 # --------------------------------------------------------------------

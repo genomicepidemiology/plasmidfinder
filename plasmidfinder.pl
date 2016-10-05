@@ -1089,8 +1089,6 @@ sub get_blast_run {
    #my ($fh, $file) = tempfile( DIR => '/tmp', UNLINK => 1);
    output_sequence(-file => ">$tmp_dir/$file", seqs => delete $args{-d}, -format => 'fasta');
    die "Error! Could not build blast database" if (system("$FORMATDB -p F -i $tmp_dir/$file"));
-   system("rm -r formatdb.log");
-   system("rm -r  $tmp_dir/$file.n*");
    my $query_file = "$file.blastpipe";
 
    #open QUERY, ">> $query_file" || die("Error! Could not perform blast run");
@@ -1134,10 +1132,9 @@ sub get_blast_run {
          } 
       } 
    }
-   #system("rm -rf formatdb.log error.log");
-   system("rm -r  $tmp_dir/$file");
-   system("rm -r  $tmp_dir/$query_file");
    system("rm -r error.log");
+   system("rm -r formatdb.log");
+   system("rm -r  $tmp_dir/");
    return @blast;
 }
 

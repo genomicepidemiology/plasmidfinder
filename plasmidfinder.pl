@@ -46,8 +46,6 @@ if (not defined $ABRES_DB) {
 
 if (not defined $dir) {
   $dir = ".";
-  #mkdir "output";
-  #$dir = "output";
 }
 
 # Making tmp directory for BLST output
@@ -60,15 +58,16 @@ mkdir("$dir/tmp");
 #
 ## AVAILABLE antimicrobial familyes ##
   # hash mapping the ARGF profiles to antibiotic names
-my %argfProfiles=();
 ##################### Antimicrobial familyes ################# ="Aminoglycoside";
-$argfProfiles{"enterobacteriaceae"} = "PlasmidFinder - Enterobacteriaceae";
-$argfProfiles{"hhas"} = "PlasmidFinder - TEST HHAS";
-$argfProfiles{"fmaa"} = "PlasmidFinder - TEST FMAA";
-$argfProfiles{"kagjo"} = "PlasmidFinder - TEST KAGJO";
-$argfProfiles{"gram_positiv"} = "PlasmidFinder - Gram-positiv";
-$argfProfiles{"rm"} = "Restricion modification";
-# -----------------------
+# Extract class names from config file
+my %argfProfiles=();
+open(IN, '<', "$ABRES_DB/config") or die "Error: $!\n";
+while (defined(my $line = <IN>)) {
+   next if $line =~ m/^#/;  # discard comments
+   my @tmp = split("\t", $line);
+   $argfProfiles{$tmp[0]} = $tmp[1];
+}
+close IN;
 
 #For alignment
 my %GENE_ALIGN_HIT_HASH; #will contain the sequence alignment lines

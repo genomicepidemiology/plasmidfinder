@@ -6,7 +6,6 @@
 
 use strict;
 use Getopt::Long qw(:config no_ignore_case no_auto_abbrev pass_through);
-use File::Temp qw/ tempfile tempdir /;
 use Bio::SeqIO;
 use Bio::Seq;
 use Bio::SearchIO;

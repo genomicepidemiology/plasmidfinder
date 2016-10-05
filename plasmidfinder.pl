@@ -1137,6 +1137,7 @@ sub get_blast_run {
    #system("rm -rf formatdb.log error.log");
    system("rm -r  $tmp_dir/$file");
    system("rm -r  $tmp_dir/$query_file");
+   system("rm -r error.log");
    return @blast;
 }
 

@@ -1023,6 +1023,10 @@ open (ALLELE, '>'."$dir"."/Plasmid_seq.fsa") || die("Error! Could not write to P
 print ALLELE $resalign;
 close (ALLELE);
 
+system("rm -r error.log");
+system("rm -r formatdb.log");
+system("rm -r  $tmp_dir/");
+
 exit;
 
 
@@ -1049,7 +1053,7 @@ sub commandline_parsing {
         }
         elsif ($ARGV[0] =~ m/^-b$/) {
             $BLAST = $ARGV[1];
-			$BLASTALL = "$BLAST/bin/blastall";
+            $BLASTALL = "$BLAST/bin/blastall";
             $FORMATDB = "$BLAST/bin/formatdb";
             shift @ARGV;
             shift @ARGV;
@@ -1131,9 +1135,6 @@ sub get_blast_run {
          } 
       } 
    }
-   system("rm -r error.log");
-   system("rm -r formatdb.log");
-   system("rm -r  $tmp_dir/");
    return @blast;
 }
 

@@ -11,14 +11,14 @@ fi
 
 # Check if the path is valid and unexisting
 if [ ! -d $path ]; then
-   git clone http://compare.cbs.dtu.dk:10080/CGE/plasmidfinder_db.git $path
+   git clone git@bitbucket.org:genomicepidemiology/plasmidfinder_db.git $path
 else
    echo "Error: path exists! Please provide a valid and unused path..."
 fi
 
 echo "Do you want to fix permissions, yes/y or no/n, followed by [ENTER]:"
 read fix
-if [[ $fix = "yes" ]] || [[ $fix -eq "y" ]]; then
+if [[ $fix == "yes" ]] || [[ $fix == "y" ]]; then
    echo "enter group name followed by [ENTER]:"
    read gn
    if [ ! -z "$gn" ]; then

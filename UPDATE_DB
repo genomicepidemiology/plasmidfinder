@@ -22,7 +22,7 @@ fi
 
 echo "Do you want to fix permissions, yes/y or no/n, followed by [ENTER]:"
 read fix
-if [[ $fix = "yes" ]] || [[ $fix -eq "y" ]]; then
+if [[ $fix == "yes" ]] || [[ $fix == "y" ]]; then
    echo "enter group name followed by [ENTER]:"
    read gn
    if [ ! -z "$gn" ]; then

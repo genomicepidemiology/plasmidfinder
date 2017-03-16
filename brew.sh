@@ -3,8 +3,8 @@
 #
 
 PERLBREW='http://install.perlbrew.pl'
-BLASTLINUX='ftp://ftp.ncbi.nlm.nih.gov/blast/executables/release/LATEST/blast-2.2.26-x64-linux.tar.gz'
-BLASTMAC='ftp://ftp.ncbi.nlm.nih.gov/blast/executables/release/LATEST/blast-2.2.26-universal-macosx.tar.gz'
+BLASTLINUX='ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.6.0+-x64-linux.tar.gz'
+BLASTMAC='ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.6.0+-x64-macosx.tar.gz'
 BLASTFOLDER=blast
 
 # PerlBrew needs to be installed to manage isolated perl environemnts if missing

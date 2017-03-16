@@ -1,5 +1,5 @@
 install:
-	cpanm BioPerl --force
+	cpanm CJFIELDS/BioPerl-1.6.924.tar.gz --force
 	cpanm Data::Dumper
 	cpanm Getopt::Long
 	cpanm File::Temp

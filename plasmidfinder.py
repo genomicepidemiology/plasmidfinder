@@ -11,7 +11,7 @@ from distutils.spawn import find_executable
 # FUNCTIONS
 ##########################################################################
 
-def text_table(headers, rows):
+def text_table(headers, rows, empty_replace='-'):
    ''' Create text table
    
    USAGE:
@@ -26,6 +26,8 @@ def text_table(headers, rows):
         3    4
       ==========
    '''
+   # Replace empty cells with placeholder
+   rows = map(lambda row: map(lambda x: x if x else empty_replace, row), rows)
    # Create table
    table = tabulate(rows, headers, tablefmt='simple').split('\n')
    # Prepare title injection

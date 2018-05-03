@@ -203,7 +203,7 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
                
                # Switch hsp_length with total HSP and push to split list
                tmp_arr[3] = results[db][hit]["split_length"]
-               split_list[res_header].append(tmp_arr)
+               split_list[res].append(tmp_arr)
             else:
                # Saving the output to write the txt result table
                rows.append(tmp_arr[:])

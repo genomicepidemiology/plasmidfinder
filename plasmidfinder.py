@@ -224,7 +224,7 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
             #>aac(2')-Ic: PERFECT MATCH, ID: 100.00%, HSP/Length: 546/546, Positions in reference: 1..546, Contig name: gi|375294201|ref|NC_016768.1|, Position: 314249..314794
             sbjct_start = results[db][hit]["sbjct_start"]
             sbjct_end = results[db][hit]["sbjct_end"]
-            text = "%s, ID: %.2f %%, Alignment Length: %s Template Length: %s, Positions in reference: %s..%s, Contig name: %s, Position: %s"%(gene, ID, HSP, sbjt_length, sbjct_start, sbjct_end, contig_name, positions_contig)
+            text = "%s, ID: %.2f %%, Alignment Length: %s, Template Length: %s, Positions in reference: %s..%s, Contig name: %s, Position: %s"%(gene, ID, HSP, sbjt_length, sbjct_start, sbjct_end, contig_name, positions_contig)
             hit_file.write(">%s\n"%text)
             
             # Writing query/hit sequence

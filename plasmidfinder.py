@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 import sys, os, collections
 from argparse import ArgumentParser
 from tabulate import tabulate
@@ -8,7 +8,6 @@ from cgecore.alignment import Blaster
 ##########################################################################
 # FUNCTIONS
 ##########################################################################
-
 def text_table(headers, rows, empty_replace='-'):
    ''' Create text table
    
@@ -25,7 +24,7 @@ def text_table(headers, rows, empty_replace='-'):
       ==========
    '''
    # Replace empty cells with placeholder
-   rows = map(lambda row: map(lambda x: x if x else empty_replace, row), rows)
+   rows = [[x if x else empty_replace for x in row] for row in rows]
    # Create table
    table = tabulate(rows, headers, tablefmt='simple').split('\n')
    # Prepare title injection
@@ -140,7 +139,7 @@ else:
 
    if args.databases is None:
       # Choose all available databases from the config file
-      databases = dbs.keys()
+      databases = list(dbs.keys())
    else:
       # Handle multiple databases
       args.databases = args.databases.split(',')
@@ -253,7 +252,6 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
             tmp_arr = [db_name, gene, ID, HSP, sbjt_length,
                        positions_ref, contig_name, positions_contig, note, acc]
             table_file.write("%s\n"%(join_as_str(tmp_arr)))
-            print(tmp_arr)
             rows.append(tmp_arr)
          
          table_file.write("\n")

@@ -1,11 +1,9 @@
 #!/usr/bin/env python2.7
-from __future__ import division
-import sys, os, time, random, re, subprocess
+import sys, os, collections
 from argparse import ArgumentParser
 from tabulate import tabulate
-import collections
-from blaster import *
 from distutils.spawn import find_executable
+from cgecore.alignment import Blaster
 
 ##########################################################################
 # FUNCTIONS

@@ -1,17 +1,15 @@
 #!/usr/bin/env python2.7
-from __future__ import division
-import sys, os, time, random, re, subprocess
+import sys, os, collections
 from argparse import ArgumentParser
 from tabulate import tabulate
-import collections
-from blaster import *
 from distutils.spawn import find_executable
+from cgecore.alignment import Blaster
 
 ##########################################################################
 # FUNCTIONS
 ##########################################################################
 
-def text_table(headers, rows):
+def text_table(headers, rows, empty_replace='-'):
    ''' Create text table
    
    USAGE:
@@ -26,6 +24,8 @@ def text_table(headers, rows):
         3    4
       ==========
    '''
+   # Replace empty cells with placeholder
+   rows = map(lambda row: map(lambda x: x if x else empty_replace, row), rows)
    # Create table
    table = tabulate(rows, headers, tablefmt='simple').split('\n')
    # Prepare title injection
@@ -164,7 +164,7 @@ txt_file_seq_text = dict()
 split_list = collections.defaultdict(list)
 join_as_str = lambda x, y='\t': y.join(map(str, x))
 
-headers = ["Database", "Plasmid", "Identity", "Alignment Length/Gene Length", "Position in reference", "Contig", "Position in contig", "Note", "Accession no."]
+headers = ["Database", "Plasmid", "Identity", "Alignment Length", "Template Length", "Position in reference", "Contig", "Position in contig", "Note", "Accession no."]
 with open(out_path+"/results_tab.txt", 'w') as tab_file, \
      open(out_path+"/results_table.txt", 'w') as table_file, \
      open(out_path+"/Plasmid_seq.fsa", 'w') as ref_file, \
@@ -175,11 +175,12 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
    
    for db in results:
       db_name = str(dbs[db][0])
+      
       if results[db] == "No hit found":
          table_file.write("%s\nNo hits found\n\n"%db_name)
       else:
-         dbs_with_results.append(db)
-         txt_file_seq_text[db] = list()
+         dbs_with_results.append(db_name)
+         txt_file_seq_text[db_name] = list()
          for hit in results[db]:
             header = results[db][hit]["sbjct_header"]
             tmp = header.split("_")
@@ -193,22 +194,20 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
             positions_ref = "%s..%s"%(results[db][hit]["sbjct_start"], results[db][hit]["sbjct_end"])
             contig_name = results[db][hit]["contig_name"]
             
-            hsp_length = "%s/%s"%(HSP, sbjt_length)
-            tmp_arr = [db_name, gene, ID, hsp_length, positions_ref, contig_name,
+            tmp_arr = [db_name, gene, ID, HSP, sbjt_length, positions_ref, contig_name,
                      positions_contig, note, acc]
             if "split_length" in results[db][hit]:
                tab_file.write("%s\n"%(join_as_str(tmp_arr)))
                
-               # Switch hsp_length with total HSP and sbjc length and push to split list
-               tmp_arr[3:4] = [results[db][hit]["split_length"], sbjt_length]
-               split_list[res_header].append(tmp_arr)
+               # Switch hsp_length with total HSP and push to split list
+               tmp_arr[3] = results[db][hit]["split_length"]
+               split_list[res].append(tmp_arr)
             else:
                # Saving the output to write the txt result table
                rows.append(tmp_arr[:])
                
                # Write tabels
                tmp_arr[2] = "%.2f"%tmp_arr[2]
-               tmp_arr[3:4] = [HSP, sbjt_length]
                tmp = "%s\n"%(join_as_str(tmp_arr))
                table_file.write(tmp)
                tab_file.write(tmp)
@@ -223,7 +222,7 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
             #>aac(2')-Ic: PERFECT MATCH, ID: 100.00%, HSP/Length: 546/546, Positions in reference: 1..546, Contig name: gi|375294201|ref|NC_016768.1|, Position: 314249..314794
             sbjct_start = results[db][hit]["sbjct_start"]
             sbjct_end = results[db][hit]["sbjct_end"]
-            text = "%s, ID: %.2f %%, Alignment Length/Gene Length: %s/%s, Positions in reference: %s..%s, Contig name: %s, Position: %s"%(gene, ID, HSP, sbjt_length, sbjct_start, sbjct_end, contig_name, positions_contig)
+            text = "%s, ID: %.2f %%, Alignment Length: %s, Template Length: %s, Positions in reference: %s..%s, Contig name: %s, Position: %s"%(gene, ID, HSP, sbjt_length, sbjct_start, sbjct_end, contig_name, positions_contig)
             hit_file.write(">%s\n"%text)
             
             # Writing query/hit sequence
@@ -232,7 +231,7 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
                hit_file.write("%s\n"%(hit_seq[i:i + 60]))
             
             # Saving the output to print the txt result file allignemts
-            txt_file_seq_text[db].append((text, ref_seq, homo_align[db][hit], hit_seq))
+            txt_file_seq_text[db_name].append((text, ref_seq, homo_align[db][hit], hit_seq))
          
          for res in split_list:
             gene = split_list[res][0][0]
@@ -251,7 +250,7 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
                contig_name = contig_name + ", " + split_list[res][i][5]
                positions_contig = positions_contig + ", " + split_list[res][i][6]
             
-            tmp_arr = [db_name, gene, ID, "%s/%s"%(HSP, sbjt_length),
+            tmp_arr = [db_name, gene, ID, HSP, sbjt_length,
                        positions_ref, contig_name, positions_contig, note, acc]
             table_file.write("%s\n"%(join_as_str(tmp_arr)))
             print(tmp_arr)
@@ -268,16 +267,17 @@ with open(out_path+"/results.txt", 'w') as f:
    if dbs_with_results:
       f.write("\n\nExtended Output:\n")
       f.write("%s\n"%('-'*80))
-      for db in dbs_with_results:
+      for db_name in dbs_with_results:
          # Txt file alignments
-         tlen = len(db)
-         spacer_size = int((80 - tlen)/2) - 2
-         spacer_left = '#'*spacer_size
-         if not tlen%2: spacer_size -= 1
-         
+         # test = lambda x: (x, (80 - x)//2, x%2, ((80 - x)//2 - 2) * 2  + (1 if x%2 else 0) + x +4)
+         tlen = len(db_name)
+         spacer_size = (80 - tlen)//2 - 2
          spacer_right = '#'*spacer_size
-         f.write("#%s %s %s#\n"%(spacer_left, db, spacer_right))
-         for text in txt_file_seq_text[db]:
+         if tlen%2: spacer_size += 1
+         
+         spacer_left = '#'*spacer_size
+         f.write("#%s %s %s#\n"%(spacer_left, db_name, spacer_right))
+         for text in txt_file_seq_text[db_name]:
             f.write("%s\n\n"%(text[0]))
             for i in range(0, len(text[1]), 60):
                f.write("%-20s%s\n"%('Template:', text[1][i:i + 60]))

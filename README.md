@@ -26,7 +26,7 @@ isolates of bacteria.
 
 ## Installation
 
-Setting up PlasmidFinder
+### Setting up PlasmidFinder
 ```bash
 # Go to wanted location for resfinder
 cd /path/to/some/dir
@@ -35,17 +35,11 @@ git clone https://bitbucket.org/genomicepidemiology/plasmidfinder.git
 cd plasmidfinder
 ```
 
-Installing up the PlasmidFinder database
-```bash
-cd /path/to/plasmidfinder
-./INSTALL_DB database
+### Installing up the PlasmidFinder database
+Check out the database repository.
+[https://bitbucket.org/genomicepidemiology/plasmidfinder_db]
 
-# Check all DB scripts works, and validate the database is correct
-./UPDATE_DB database
-./VALIDATE_DB database
-```
-
-Installing dependencies:
+### Installing dependencies:
 
 Perlbrew is used to manage isolated perl environments. To install it run:
 ```bash

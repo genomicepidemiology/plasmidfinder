@@ -4,8 +4,10 @@ import sys, os, time, random, re, subprocess
 from argparse import ArgumentParser
 from tabulate import tabulate
 import collections
-from blaster import *
+from cgecore.blaster import Blaster
+from cgecore.cgefinder import CGEFinder
 from distutils.spawn import find_executable
+import json, gzip
 
 ##########################################################################
 # FUNCTIONS
@@ -38,6 +40,87 @@ def text_table(headers, rows, empty_replace='-'):
    table = ("%s\n"*3)%('*'*(width+2), '\n'.join(table), '='*(width+2))
    return table
 
+def get_read_filename(infiles):
+   ''' Infiles must be a list with 1 or 2 input files.
+       Removes path from given string and removes extensions:
+       .fq .fastq .gz and .trim
+       extract the common sample name i 2 files are given.
+   '''
+   # Remove common fastq extensions
+   seq_path = infiles[0]
+   seq_file = os.path.basename(seq_path)
+   seq_file = seq_file.replace(".fq", "")
+   seq_file = seq_file.replace(".fastq", "")
+   seq_file = seq_file.replace(".gz", "")
+   seq_file = seq_file.replace(".trim", "")
+   if len(infiles) == 1:
+      return seq_file.rstrip()
+
+   # If two files are given get the common sample name
+   sample_name = ""
+   seq_file_2 = os.path.basename(infiles[1])
+   for i in range(len(seq_file)):
+      if seq_file_2[i] == seq_file[i]:
+         sample_name += seq_file[i]
+      else: 
+         break
+   if sample_name == "":
+      sys.error("Input error: sample names of input files, {} and {}, \
+                 does not share a common sample name. If these files \
+                 are paired end reads from the same sample, please rename \
+                 them with a common sample name (e.g. 's22_R1.fq', 's22_R2.fq') \
+                 or input them seperately.".format(infiles[0], infiles[1]))
+
+   return sample_name.rstrip("-").rstrip("_")
+
+def is_gzipped(file_path):
+   ''' Returns True if file is gzipped and False otherwise.
+       The result is inferred from the first two bits in the file read
+       from the input path.
+       On unix systems this should be: 1f 8b
+       Theoretically there could be exceptions to this test but it is
+       unlikely and impossible if the input files are otherwise expected
+       to be encoded in utf-8.
+   '''
+   with open(file_path, mode='rb') as fh:
+      bit_start = fh.read(2)
+   if(bit_start == b'\x1f\x8b'):
+      return True
+   else:
+      return False
+
+def get_file_format(input_files):
+   """
+   Takes all input files and checks their first character to assess
+   the file format. Returns one of the following strings; fasta, fastq, 
+   other or mixed. fasta and fastq indicates that all input files are 
+   of the same format, either fasta or fastq. other indiates that all
+   files are not fasta nor fastq files. mixed indicates that the inputfiles
+   are a mix of different file formats.
+   """
+
+   # Open all input files and get the first character
+   file_format = []
+   invalid_files = []
+   for infile in input_files:
+      if is_gzipped(infile):#[-3:] == ".gz":
+         f = gzip.open(infile, "rb")
+         fst_char = f.read(1);
+      else:
+         f = open(infile, "rb")
+         fst_char = f.read(1);
+      f.close()
+      # Assess the first character
+      if fst_char == b"@":
+         file_format.append("fastq")
+      elif fst_char == b">":
+         file_format.append("fasta")
+      else:
+         invalid_files.append("other")
+   if len(set(file_format)) != 1:
+      return "mixed"
+   return ",".join(set(file_format))
+
 ##########################################################################
 #	DEFINE GLOBAL VARIABLES
 ##########################################################################
@@ -49,9 +132,9 @@ global database_path, databases, min_length, threshold
 ##########################################################################
 
 parser = ArgumentParser()
-parser.add_argument("-i", "--inputfile", dest="inputfile",help="Input file", default='')
+parser.add_argument("-i", "--inputfile", dest="inputfile",help="Input file", default='', nargs="+")
 parser.add_argument("-o", "--outputPath", dest="out_path",help="Path to blast output", default='')
-parser.add_argument("-b", "--blastPath", dest="blast_path",help="Path to blast", default='blastn')
+parser.add_argument("-mp", "--methodPath", dest="method_path",help="Path to method", default='')
 parser.add_argument("-p", "--databasePath", dest="db_path",help="Path to the databases", default='')
 parser.add_argument("-d", "--databases", dest="databases",help="Databases chosen to search in - if non is specified all is used", default=None)
 parser.add_argument("-l", "--mincov", dest="min_cov",help="Minimum coverage", default=0.60)
@@ -65,8 +148,9 @@ args = parser.parse_args()
 
 # Defining varibales
 
-min_cov = args.min_cov
-threshold = args.threshold
+min_cov = float(args.min_cov)
+threshold = float(args.threshold)
+method_path = args.method_path
 
 # Check if valid database is provided
 if args.db_path is None:
@@ -83,13 +167,17 @@ else:
    # Save path
    db_path = args.db_path
 
-# Check if valid input file is provided
+# Check if valid input files are provided
 if args.inputfile is None:
    sys.exit("Input Error: No Input were provided!\n")
-elif not os.path.exists(args.inputfile):
+
+elif not os.path.exists(args.inputfile[0]):
    sys.exit("Input Error: Input file does not exist!\n")
-else:
-    inputfile = args.inputfile
+elif len(args.inputfile) > 1 and not os.path.exists(args.inputfile[1]):
+   sys.exit("Input Error: Input file does not exist!\n")
+
+else:   
+   inputfile = args.inputfile
 
 # Check if valid output directory is provided
 if not os.path.exists(args.out_path):
@@ -97,14 +185,6 @@ if not os.path.exists(args.out_path):
    out_path = '.'
 else:
    out_path = args.out_path
-
-# Check if valid path to BLAST is provided
-if not os.path.exists(args.blast_path):
-   blast = 'blastn'
-   if find_executable(blast) is None:
-      sys.exit("Input Error: blastn could not be found, please provide a path to blastn!\n")
-else:
-   blast = args.blast_path
 
 # Check if databases and config file are correct/correponds
 if args.databases is '':
@@ -155,9 +235,55 @@ else:
             sys.exit("Input Error: Provided database was not "
                      "recognised! (%s)\n"%db_prefix)
 
-# Calling blast and parsing output
-results, query_align, homo_align, sbjct_align = Blaster(
-   inputfile, databases, db_path, out_path, min_cov, threshold, blast)
+# Check file format (fasta, fastq or other format)
+file_format = get_file_format(inputfile)
+
+# Call appropriate method (kma or blastn) based on file format 
+if file_format == "fastq":
+   if not method_path:
+      method_path = "kma"
+      if find_executable(method_path) == None:
+         sys.exit("No valid path to a kma program was provided. Use the -mp flag to provide the path.")
+   # Check the number of files
+   if len(inputfile) == 1:
+      infile_1 = inputfile[0]
+      infile_2 = None
+   elif len(inputfile) == 2:
+      infile_1 = inputfile[0]
+      infile_2 = inputfile[1]
+   else:
+      sys.exit("Only 2 input file accepted for raw read data,\
+                if data from more runs is avaliable for the same\
+                sample, please concatinate the reads into two files")
+    
+   sample_name = get_read_filename(inputfile)
+   method = "kma"
+
+   # Call KMA
+   method_obj = CGEFinder.kma(infile_1, out_path, databases, db_path, min_cov=min_cov,
+                              threshold=threshold, kma_path=method_path, sample_name=sample_name,
+                              inputfile_2=infile_2, kma_mrs=0.75, kma_gapopen=-5,
+                              kma_gapextend=-1, kma_penalty=-3, kma_reward=1)
+
+elif file_format == "fasta":
+   if not method_path:
+      method_path = "blastn"
+      if find_executable(method_path) == None:
+         sys.exit("No valid path to a blastn program was provided. Use the -mp flag to provide the path.")
+   # Assert that only one fasta file is inputted
+   assert len(inputfile) == 1, "Only one input file accepted for assembled data"
+   inputfile = inputfile[0]
+   method = "blast"
+
+   # Call BLASTn
+   method_obj = Blaster(inputfile, databases, db_path, out_path, min_cov, threshold, method_path)
+else:
+   sys.exit("Input file must be fastq or fasta format, not "+ file_format)
+
+results     = method_obj.results
+query_align = method_obj.gene_align_query
+homo_align  = method_obj.gene_align_homo
+sbjct_align = method_obj.gene_align_sbjct
 
 # Getting and writing out the results
 rows = list()
@@ -165,6 +291,7 @@ dbs_with_results = list()
 txt_file_seq_text = dict()
 split_list = collections.defaultdict(list)
 join_as_str = lambda x, y='\t': y.join(map(str, x))
+json_results = dict()
 
 headers = ["Database", "Plasmid", "Identity", "Alignment Length", "Template Length", "Position in reference", "Contig", "Position in contig", "Note", "Accession no."]
 with open(out_path+"/results_tab.txt", 'w') as tab_file, \
@@ -176,6 +303,8 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
    table_file.write("%s\n"%(join_as_str(headers)))
    
    for db in results:
+      if db == 'excluded':
+         continue
       db_name = str(dbs[db][0])
       
       if results[db] == "No hit found":
@@ -198,6 +327,7 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
             
             tmp_arr = [db_name, gene, ID, HSP, sbjt_length, positions_ref, contig_name,
                      positions_contig, note, acc]
+
             if "split_length" in results[db][hit]:
                tab_file.write("%s\n"%(join_as_str(tmp_arr)))
                
@@ -235,6 +365,15 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
             # Saving the output to print the txt result file allignemts
             txt_file_seq_text[db_name].append((text, ref_seq, homo_align[db][hit], hit_seq))
          
+            # Write JSON results dict
+            if db_name not in json_results:
+               json_results[db_name] = dict()
+            json_results[db_name].update({header:{}})
+            json_results[db_name][header] = {"plasmid":gene,"ID":round(ID,2),"align_length":HSP,
+                                             "template_length":sbjt_length,"position_in_ref":positions_ref,
+                                             "contig_name":contig_name,"positions_in_contig":positions_contig,
+                                             "note":note,"accession":acc}
+
          for res in split_list:
             gene = split_list[res][0][0]
             ID = split_list[res][0][1]
@@ -259,6 +398,7 @@ with open(out_path+"/results_tab.txt", 'w') as tab_file, \
             rows.append(tmp_arr)
          
          table_file.write("\n")
+
 
 # Writing the txt file
 with open(out_path+"/results.txt", 'w') as f:
@@ -287,3 +427,23 @@ with open(out_path+"/results.txt", 'w') as f:
                f.write("%-20s%s\n\n"%('Query:', text[3][i:i + 60]))
             
             f.write("\n%s\n"%('-'*80))
+
+# Get run info for JSON file
+service = os.path.basename(__file__).replace(".py", "")
+date = time.strftime("%d.%m.%Y")
+time = time.strftime("%H:%M:%S")
+
+# Make JSON output file
+data = {service:{}}
+
+userinput = {"filename(s)":args.inputfile, "method":method,"file_format":file_format}
+run_info = {"date":date, "time":time,"dbs_with_results":dbs_with_results}
+
+data[service]["user_input"] = userinput
+data[service]["run_info"] = run_info
+data[service]["results"] = json_results
+
+# Save json output
+result_file = "{}/data.json".format(out_path) 
+with open(result_file, "w") as outfile:  
+   json.dump(data, outfile)

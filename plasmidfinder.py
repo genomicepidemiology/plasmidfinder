@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 from __future__ import division
 import sys, os, time, random, re, subprocess
 from argparse import ArgumentParser
@@ -135,7 +135,7 @@ parser = ArgumentParser()
 parser.add_argument("-i", "--inputfile", dest="inputfile",help="Input file", default='', nargs="+")
 parser.add_argument("-o", "--outputPath", dest="out_path",help="Path to blast output", default='')
 parser.add_argument("-mp", "--methodPath", dest="method_path",help="Path to method", default='')
-parser.add_argument("-p", "--databasePath", dest="db_path",help="Path to the databases", default='')
+parser.add_argument("-p", "--databasePath", dest="db_path",help="Path to the databases", default='/database')
 parser.add_argument("-d", "--databases", dest="databases",help="Databases chosen to search in - if non is specified all is used", default=None)
 parser.add_argument("-l", "--mincov", dest="min_cov",help="Minimum coverage", default=0.60)
 parser.add_argument("-t", "--threshold", dest="threshold",help="Blast threshold for identity", default=0.90)

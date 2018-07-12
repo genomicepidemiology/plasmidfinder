@@ -30,12 +30,14 @@ cd plasmidfinder
 ```
 
 Build Docker container
-
-##### MISSING #######
 ```bash
 # Build container
 docker build -t plasmidfinder .
+```
+
+##### MISSING #######
 # Run test
+```bash
 docker run --rm -it \
        --entrypoint=/test/test.sh mlst
 ```

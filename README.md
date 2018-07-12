@@ -35,17 +35,7 @@ Build Docker container
 docker build -t plasmidfinder .
 ```
 
-##### MISSING #######
-# Run test
-```bash
-docker run --rm -it \
-       --entrypoint=/test/test.sh mlst
-```
-##### MISSING #######
-
 #Download and install PlasmidFinder database
-
-
 
 ```bash
 # Go to the directory where you want to store the plasmidfinder database

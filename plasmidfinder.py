@@ -7,7 +7,7 @@ import collections
 from cgecore.blaster import Blaster
 from cgecore.cgefinder import CGEFinder
 from distutils.spawn import find_executable
-import json, gzip
+import json, gzip, pprint
 
 ##########################################################################
 # FUNCTIONS
@@ -134,11 +134,16 @@ global database_path, databases, min_length, threshold
 parser = ArgumentParser()
 parser.add_argument("-i", "--inputfile", dest="inputfile",help="Input file", default='', nargs="+")
 parser.add_argument("-o", "--outputPath", dest="out_path",help="Path to blast output", default='')
+parser.add_argument("-tmp", "--tmp_dir")
 parser.add_argument("-mp", "--methodPath", dest="method_path",help="Path to method", default='')
 parser.add_argument("-p", "--databasePath", dest="db_path",help="Path to the databases", default='/database')
 parser.add_argument("-d", "--databases", dest="databases",help="Databases chosen to search in - if non is specified all is used", default=None)
 parser.add_argument("-l", "--mincov", dest="min_cov",help="Minimum coverage", default=0.60)
 parser.add_argument("-t", "--threshold", dest="threshold",help="Blast threshold for identity", default=0.90)
+parser.add_argument("-x", "--extented_output",
+                    help="Give extented output with allignment files, template and query hits in fasta and\
+                          a tab seperated file with allele profile results", action="store_true")
+
 args = parser.parse_args()
 
 
@@ -184,7 +189,16 @@ if not os.path.exists(args.out_path):
    # sys.exit("Input Error: Output dirctory does not exists!\n")
    out_path = '.'
 else:
-   out_path = args.out_path
+   out_path = os.path.abspath(args.out_path)
+
+# Check if valid tmp directory is provided
+if args.tmp_dir:
+   if not os.path.exists(args.tmp_dir):
+      sys.exit("Input Error: Tmp dirctory, {}, does not exists!\n".format(args.tmp_dir))
+   else:
+      tmp_dir = os.path.abspath(args.tmp_dir)
+else:
+   tmp_dir = out_path
 
 # Check if databases and config file are correct/correponds
 if args.databases is '':
@@ -260,7 +274,7 @@ if file_format == "fastq":
    method = "kma"
 
    # Call KMA
-   method_obj = CGEFinder.kma(infile_1, out_path, databases, db_path, min_cov=min_cov,
+   method_obj = CGEFinder.kma(infile_1, tmp_dir, databases, db_path, min_cov=min_cov,
                               threshold=threshold, kma_path=method_path, sample_name=sample_name,
                               inputfile_2=infile_2, kma_mrs=0.75, kma_gapopen=-5,
                               kma_gapextend=-1, kma_penalty=-3, kma_reward=1)
@@ -293,140 +307,114 @@ split_list = collections.defaultdict(list)
 join_as_str = lambda x, y='\t': y.join(map(str, x))
 json_results = dict()
 
-headers = ["Database", "Plasmid", "Identity", "Alignment Length", "Template Length", "Position in reference", "Contig", "Position in contig", "Note", "Accession no."]
-with open(out_path+"/results_tab.txt", 'w') as tab_file, \
-     open(out_path+"/results_table.txt", 'w') as table_file, \
-     open(out_path+"/Plasmid_seq.fsa", 'w') as ref_file, \
-     open(out_path+"/Hit_in_genome_seq.fsa", 'w') as hit_file:
-   # Write the header for the tab file
-   tab_file.write("%s\n"%(join_as_str(headers)))
-   table_file.write("%s\n"%(join_as_str(headers)))
-   
-   for db in results:
-      if db == 'excluded':
-         continue
-      db_name = str(dbs[db][0])
-      
-      if results[db] == "No hit found":
-         table_file.write("%s\nNo hits found\n\n"%db_name)
-      else:
-         dbs_with_results.append(db_name)
-         txt_file_seq_text[db_name] = list()
-         for hit in results[db]:
-            header = results[db][hit]["sbjct_header"]
-            tmp = header.split("_")
-            gene = tmp[0]
-            note = tmp[2]
-            acc = tmp[3]
-            ID = results[db][hit]["perc_ident"]
-            sbjt_length = results[db][hit]["sbjct_length"]
-            HSP = results[db][hit]["HSP_length"]
-            positions_contig = "%s..%s"%(results[db][hit]["query_start"], results[db][hit]["query_end"])
-            positions_ref = "%s..%s"%(results[db][hit]["sbjct_start"], results[db][hit]["sbjct_end"])
-            contig_name = results[db][hit]["contig_name"]
-            
-            tmp_arr = [db_name, gene, ID, HSP, sbjt_length, positions_ref, contig_name,
-                     positions_contig, note, acc]
+tab_file_lst = []
+table_file_lst = []
+ref_file_lst = []
+hit_file_lst = []
 
-            if "split_length" in results[db][hit]:
-               tab_file.write("%s\n"%(join_as_str(tmp_arr)))
-               
-               # Switch hsp_length with total HSP and push to split list
-               tmp_arr[3] = results[db][hit]["split_length"]
-               split_list[res].append(tmp_arr)
-            else:
-               # Saving the output to write the txt result table
-               rows.append(tmp_arr[:])
-               
-               # Write tabels
-               tmp_arr[2] = "%.2f"%tmp_arr[2]
-               tmp = "%s\n"%(join_as_str(tmp_arr))
-               table_file.write(tmp)
-               tab_file.write(tmp)
+headers = ["Database", "Plasmid", "Identity", "Alignment Length", "Template Length", "Position in reference", "Contig", "Position in contig", "Note", "Accession no."]
+header_str = "\t".join(headers) + "\n"
+
+# Write the header for the tab files
+tab_file_lst.append(header_str)
+table_file_lst.append(header_str)
+   
+for db in results:
+   if db == 'excluded':
+      continue
+   db_name = str(dbs[db][0])
+   if db_name not in json_results:
+      json_results[db_name] = {}
+   if results[db] == "No hit found":
+      table_file_lst.append("%s\nNo hits found\n\n"%db_name)
+   else:
+      dbs_with_results.append(db_name)
+      txt_file_seq_text[db_name] = list()
+      for hit in results[db]:
+         header = results[db][hit]["sbjct_header"]
+         tmp = header.split("_")
+         gene = tmp[0]
+         note = tmp[2]
+         acc = tmp[3]
+         ID = results[db][hit]["perc_ident"]
+         sbjt_length = results[db][hit]["sbjct_length"]
+         HSP = results[db][hit]["HSP_length"]
+         positions_contig = "%s..%s"%(results[db][hit]["query_start"], results[db][hit]["query_end"])
+         positions_ref = "%s..%s"%(results[db][hit]["sbjct_start"], results[db][hit]["sbjct_end"])
+         contig_name = results[db][hit]["contig_name"]
+
+         tmp_arr = [db_name, gene, ID, HSP, sbjt_length, positions_ref, contig_name,
+                    positions_contig, note, acc]
+
+         if "split_length" in results[db][hit]:
+            tab_file_lst.append("%s\n"%(join_as_str(tmp_arr)))
             
-            # Writing subjet/ref sequence
-            ref_seq = sbjct_align[db][hit]
-            ref_file.write(">%s_%s\n"%(gene, acc))
-            for i in range(0, len(ref_seq), 60):
-               ref_file.write("%s\n"%(ref_seq[i:i + 60]))
+            # Switch hsp_length with total HSP and push to split list
+            tmp_arr[3] = results[db][hit]["split_length"]
+            split_list[hit].append(tmp_arr)
+         else:
+            # Saving the output to write the txt result table
+            rows.append(tmp_arr[:])
             
-            # Getting the header and text for the txt file output
-            #>aac(2')-Ic: PERFECT MATCH, ID: 100.00%, HSP/Length: 546/546, Positions in reference: 1..546, Contig name: gi|375294201|ref|NC_016768.1|, Position: 314249..314794
-            sbjct_start = results[db][hit]["sbjct_start"]
-            sbjct_end = results[db][hit]["sbjct_end"]
-            text = "%s, ID: %.2f %%, Alignment Length: %s, Template Length: %s, Positions in reference: %s..%s, Contig name: %s, Position: %s"%(gene, ID, HSP, sbjt_length, sbjct_start, sbjct_end, contig_name, positions_contig)
-            hit_file.write(">%s\n"%text)
+            # Write tabels
+            tmp_arr[2] = "%.2f"%tmp_arr[2]
+            tmp = "%s\n"%(join_as_str(tmp_arr))
+            table_file_lst.append(tmp)
+            tab_file_lst.append(tmp)
             
-            # Writing query/hit sequence
-            hit_seq = query_align[db][hit]
-            for i in range(0, len(hit_seq), 60):
-               hit_file.write("%s\n"%(hit_seq[i:i + 60]))
+         # Writing subjet/ref sequence
+         ref_seq = sbjct_align[db][hit]
+         ref_file_lst.append(">%s_%s\n"%(gene, acc))
+         for i in range(0, len(ref_seq), 60):
+            ref_file_lst.append("%s\n"%(ref_seq[i:i + 60]))
+           
+         # Getting the header and text for the txt file output
+         #>aac(2')-Ic: PERFECT MATCH, ID: 100.00%, HSP/Length: 546/546, Positions in reference: 1..546, Contig name: gi|375294201|ref|NC_016768.1|, Position: 314249..314794
+         sbjct_start = results[db][hit]["sbjct_start"]
+         sbjct_end = results[db][hit]["sbjct_end"]
+         text = "%s, ID: %.2f %%, Alignment Length: %s, Template Length: %s, Positions in reference: %s..%s, Contig name: %s, Position: %s"%(gene, ID, HSP, sbjt_length, sbjct_start, sbjct_end, contig_name, positions_contig)
+
+         hit_file_lst.append(">%s\n"%text)
+         # Writing query/hit sequence
+         hit_seq = query_align[db][hit]
+         for i in range(0, len(hit_seq), 60):
+            hit_file_lst.append("%s\n"%(hit_seq[i:i + 60]))
             
-            # Saving the output to print the txt result file allignemts
-            txt_file_seq_text[db_name].append((text, ref_seq, homo_align[db][hit], hit_seq))
-         
-            # Write JSON results dict
-            if db_name not in json_results:
-               json_results[db_name] = dict()
-            json_results[db_name].update({header:{}})
-            json_results[db_name][header] = {"plasmid":gene,"ID":round(ID,2),"align_length":HSP,
+         # Saving the output to print the txt result file allignemts
+         txt_file_seq_text[db_name].append((text, ref_seq, homo_align[db][hit], hit_seq))
+      
+         # Write JSON results dict
+         json_results[db_name].update({header:{}})
+         json_results[db_name][header] = {"plasmid":gene,"ID":round(ID,2),"align_length":HSP,
                                              "template_length":sbjt_length,"position_in_ref":positions_ref,
                                              "contig_name":contig_name,"positions_in_contig":positions_contig,
                                              "note":note,"accession":acc}
-
-         for res in split_list:
-            gene = split_list[res][0][0]
-            ID = split_list[res][0][1]
-            HSP = split_list[res][0][2]
-            sbjt_length = split_list[res][0][3]
-            positions_ref = split_list[res][0][4]
-            contig_name = split_list[res][0][5]
-            positions_contig = split_list[res][0][6]
-            note = split_list[res][0][7]
-            acc = split_list[res][0][8]
+      # TODO What are the split genes? Are they saved in the json output?
+      for res in split_list:
+         gene = split_list[res][0][0]
+         ID = split_list[res][0][1]
+         HSP = split_list[res][0][2]
+         sbjt_length = split_list[res][0][3]
+         positions_ref = split_list[res][0][4]
+         contig_name = split_list[res][0][5]
+         positions_contig = split_list[res][0][6]
+         note = split_list[res][0][7]
+         acc = split_list[res][0][8]
             
-            for i in range(1,len(split_list[res])):
-               ID = "%s, %.2f"%(ID, split_list[res][i][1])
-               positions_ref = positions_ref + ", " + split_list[res][i][4]
-               contig_name = contig_name + ", " + split_list[res][i][5]
-               positions_contig = positions_contig + ", " + split_list[res][i][6]
+         for i in range(1,len(split_list[res])):
+            ID = "%s, %.2f"%(ID, split_list[res][i][1])
+            positions_ref = positions_ref + ", " + split_list[res][i][4]
+            contig_name = contig_name + ", " + split_list[res][i][5]
+            positions_contig = positions_contig + ", " + split_list[res][i][6]
             
-            tmp_arr = [db_name, gene, ID, HSP, sbjt_length,
-                       positions_ref, contig_name, positions_contig, note, acc]
-            table_file.write("%s\n"%(join_as_str(tmp_arr)))
-            print(tmp_arr)
-            rows.append(tmp_arr)
-         
-         table_file.write("\n")
+         tmp_arr = [db_name, gene, ID, HSP, sbjt_length,
+                    positions_ref, contig_name, positions_contig, note, acc]
 
+         table_file_lst.append("%s\n"%(join_as_str(tmp_arr)))
+         rows.append(tmp_arr)
 
-# Writing the txt file
-with open(out_path+"/results.txt", 'w') as f:
-   # Writing table
-   f.write(text_table(headers, rows))
-   
-   # Writing extended output
-   if dbs_with_results:
-      f.write("\n\nExtended Output:\n")
-      f.write("%s\n"%('-'*80))
-      for db_name in dbs_with_results:
-         # Txt file alignments
-         # test = lambda x: (x, (80 - x)//2, x%2, ((80 - x)//2 - 2) * 2  + (1 if x%2 else 0) + x +4)
-         tlen = len(db_name)
-         spacer_size = (80 - tlen)//2 - 2
-         spacer_right = '#'*spacer_size
-         if tlen%2: spacer_size += 1
-         
-         spacer_left = '#'*spacer_size
-         f.write("#%s %s %s#\n"%(spacer_left, db_name, spacer_right))
-         for text in txt_file_seq_text[db_name]:
-            f.write("%s\n\n"%(text[0]))
-            for i in range(0, len(text[1]), 60):
-               f.write("%-20s%s\n"%('Template:', text[1][i:i + 60]))
-               f.write("%-20s%s\n"%('', text[2][i:i + 60]))
-               f.write("%-20s%s\n\n"%('Query:', text[3][i:i + 60]))
-            
-            f.write("\n%s\n"%('-'*80))
+      table_file_lst.append("\n")
+
 
 # Get run info for JSON file
 service = os.path.basename(__file__).replace(".py", "")
@@ -443,7 +431,47 @@ data[service]["user_input"] = userinput
 data[service]["run_info"] = run_info
 data[service]["results"] = json_results
 
+pprint.pprint(data)
+
 # Save json output
 result_file = "{}/data.json".format(out_path) 
-with open(result_file, "w") as outfile:  
+with open(result_file, "w") as outfile:
    json.dump(data, outfile)
+
+if args.extented_output:
+   # Writing the txt file
+   with open(out_path+"/results.txt", 'w') as f, \
+        open(out_path+"/results_tab.txt", 'w') as tab_file, \
+        open(out_path+"/results_table.txt", 'w') as table_file, \
+        open(out_path+"/Plasmid_seq.fsa", 'w') as ref_file, \
+        open(out_path+"/Hit_in_genome_seq.fsa", 'w') as hit_file:
+      tab_file.write("".join(tab_file_lst))
+      table_file.write("".join(table_file_lst))
+      ref_file.write("".join(ref_file_lst))
+      hit_file.write("".join(hit_file_lst))
+
+      # Writing table
+      f.write(text_table(headers, rows))
+   
+      # Writing extended output
+      if dbs_with_results:
+         f.write("\n\nExtended Output:\n")
+         f.write("%s\n"%('-'*80))
+         for db_name in dbs_with_results:
+            # Txt file alignments
+            tlen = len(db_name)
+            spacer_size = (80 - tlen)//2 - 2
+            spacer_right = '#'*spacer_size
+            if tlen%2: spacer_size += 1
+         
+            spacer_left = '#'*spacer_size
+            f.write("#%s %s %s#\n"%(spacer_left, db_name, spacer_right))
+            for text in txt_file_seq_text[db_name]:
+               f.write("%s\n\n"%(text[0]))
+               for i in range(0, len(text[1]), 60):
+                  f.write("%-20s%s\n"%('Template:', text[1][i:i + 60]))
+                  f.write("%-20s%s\n"%('', text[2][i:i + 60]))
+                  f.write("%-20s%s\n\n"%('Query:', text[3][i:i + 60]))
+            
+               f.write("\n%s\n"%('-'*80))
+

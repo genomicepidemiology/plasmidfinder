@@ -26,7 +26,14 @@ RUN git clone --branch 0.14.5 --depth 1 https://bitbucket.org/genomicepidemiolog
 
 COPY plasmidfinder.py /usr/src/plasmidfinder.py 
 
-RUN chmod 755 /usr/src/plasmidfinder.py;
+# TEST setup
+RUN mkdir /database /test
+COPY test/database/ /database/ 
+COPY test/test* test/
+COPY plasmidfinder.py /usr/src/plasmidfinder.py 
+
+RUN chmod 755 /usr/src/plasmidfinder.py; \
+    chmod 755 test/test.sh
 
 ENV PATH $PATH:/usr/src
 # Setup .bashrc file for convenience during debugging

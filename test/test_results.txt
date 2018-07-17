@@ -1,0 +1,2 @@
+Database	Plasmid	Identity	Alignment Length	Template Length	Position in reference	Contig	Position in contig	Note	Accession no.
+Enterobacteriaceae	IncHI1B(R27)	100.00	540	540	1..540	IncHI1B(R27)_1_R27_AF250878	1..540	R27	AF250878

@@ -33,6 +33,9 @@ Build Docker container
 ```bash
 # Build container
 docker build -t plasmidfinder .
+# Run test
+docker run --rm -it \
+       --entrypoint=/test/test.sh plasmidfinder
 ```
 
 #Download and install PlasmidFinder database

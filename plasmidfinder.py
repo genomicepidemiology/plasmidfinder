@@ -402,7 +402,7 @@ with open(result_file, "w") as outfile:
    json.dump(data, outfile)
 
 # Getting and writing out the results
-header = ["Plasmid", "Identity", "Query / Template length", "Contig", "Position in contig", "Accession number"]
+header = ["Plasmid", "Identity", "Query / Template length", "Contig", "Position in contig", "Note", "Accession number"]
 
 if args.extented_output:
    # Define extented output 
@@ -445,12 +445,13 @@ if args.extented_output:
             template_HSP = str(gene_info["HSP_length"]) + " / " + str(gene_info["template_length"])
             position_in_ref = gene_info["position_in_ref"]
             position_in_contig = gene_info["positions_in_contig"]
+            note = gene_info["note"]
             acc = gene_info["accession"]
             contig_name = gene_info["contig_name"]
 
             # Add rows to result tables
-            db_rows.append([vir_gene, identity, template_HSP, contig_name, position_in_contig, acc])
-            rows.append([db_name, vir_gene, identity, template_HSP, contig_name, position_in_contig, acc])
+            db_rows.append([vir_gene, identity, template_HSP, contig_name, position_in_contig, note, acc])
+            rows.append([db_name, vir_gene, identity, template_HSP, contig_name, position_in_contig, note, acc])
 
             # Write query fasta output
             hit_name = gene_info["hit_id"]

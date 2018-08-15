@@ -423,7 +423,7 @@ if args.extented_output:
    for species, dbs_info in json_results.items():
       for db_name, db_hits in dbs_info.items():
          result_file.write("*"*len("\t".join(header)) + "\n")
-         result_file.write(db_name + "\n")
+         result_file.write(",".join(dbs[db_name]) + "\n")
          db_rows = []
 
          # Check it hits are found

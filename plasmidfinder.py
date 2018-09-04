@@ -360,9 +360,14 @@ for db in results:
          header = hit["sbjct_header"]
 
          tmp = header.split("_")
-         gene = tmp[0]
-         note = tmp[2]
-         acc = tmp[3]
+         try:
+            gene = tmp[0]
+            note = tmp[2]
+            acc = tmp[3]
+         except IndexError:
+            gene = tmp
+            note = ""
+            acc = ""
          identity = hit["perc_ident"]
          coverage = hit["perc_coverage"]
          sbj_length = hit["sbjct_length"]

@@ -169,6 +169,7 @@ elif not os.path.exists(args.infile[0]):
 elif len(args.infile) > 1:
    if not os.path.exists(args.infile[1]):
       sys.exit("Input Error: Input file does not exist!\n")
+   infile = args.infile
 else:   
    infile = args.infile
 
@@ -363,7 +364,7 @@ for db in results:
          try:
             gene = tmp[0]
             note = tmp[2]
-            acc = tmp[3]
+            acc = "".join(tmp[3:])
          except IndexError:
             gene = tmp
             note = ""

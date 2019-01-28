@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND Teletype
 RUN pip3 install -U biopython tabulate cgecore==1.3.6;
 
 # Install kma 
-RUN git clone --branch 0.14.5 --depth 1 https://bitbucket.org/genomicepidemiology/kma.git; \
+RUN git clone --branch 1.0.1 --depth 1 https://bitbucket.org/genomicepidemiology/kma.git; \
     cd kma && make; \
     mv kma* /bin/
 

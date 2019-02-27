@@ -328,36 +328,6 @@ for db in results:
       hit_lsts.sort(key=lambda x: x[0])
       hits = [hit[3] for hit in hit_lsts]
 
-      # Get information from the fisrt hit found
-      current_end = hit_lsts[0][1]
-      current_bit_score = hit_lsts[0][2]
-    
-      # Check if more then one hit was found within the same gene
-      for i in range(len(hit_lsts)-1):
-
-         # Save information from next hit
-         next_start = hit_lsts[i+1][0]
-         next_end = hit_lsts[i+1][1]
-         next_bit_score = hit_lsts[i+1][2]
-
-         # Check for overlapping sequences
-         # <--------------->
-         #            <------------>
-         if next_start < current_end:
-            # Delete the hit with lowest bit score from the hit list
-            #<----->
-            #   <-------------------->
-            if current_bit_score < next_bit_score:
-               del hits[i]
-               # reset current end and score
-               current_end = next_end
-               current_bit_score = next_bit_score
-            #<-------------------->
-            #                  <----->
-            else:
-               # Delete next hit, keep current end and bit score
-                del hits[i+1]
-
       for hit in hits:
          header = hit["sbjct_header"]
 

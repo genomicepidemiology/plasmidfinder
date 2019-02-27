@@ -11,7 +11,6 @@ import json, gzip, pprint
 ##########################################################################
 # FUNCTIONS
 ##########################################################################
-
 def text_table(headers, rows, empty_replace='-'):
    ''' Create text table
    
@@ -28,7 +27,7 @@ def text_table(headers, rows, empty_replace='-'):
       ==========
    '''
    # Replace empty cells with placeholder
-   rows = map(lambda row: map(lambda x: x if x else empty_replace, row), rows)
+   rows = [[x if x else empty_replace for x in row] for row in rows]
    # Create table
    table = tabulate(rows, headers, tablefmt='simple').split('\n')
    # Prepare title injection
@@ -301,8 +300,10 @@ for db in results:
    db_name = str(dbs[db][0])
    if db_name not in json_results:
       json_results[db_name] = {}
+
    if db not in json_results[db_name]: 
       json_results[db_name][db] = {}
+
    if results[db] == "No hit found":
       json_results[db_name][db] = "No hit found"
    else:
@@ -437,11 +438,6 @@ if args.extented_output:
             content = ['']*len(header)
             content[int(len(header)/2)] = db_hits
             result_file.write(text_table(header, [content]) + "\n")
-            #result_file.write("*"*len("\t".join(header)) + "\n")
-            #result_file.write("\t".join(header) + "\n")
-            #result_file.write("*"*len("\t".join(header)) + "\n")
-            #result_file.write(db_hits.rstrip() + "\n")
-            #result_file.write("="*len("\t".join(header)) + "\n")
             continue
 
          for gene_id, gene_info in sorted(db_hits.items(), key=lambda  x: (x[1]['plasmid'], x[1]['accession'])):

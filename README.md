@@ -73,7 +73,7 @@ When running the docker file you have to mount 2 directories:
  2. An output/input folder from where the input file can be reached and an output files can be saved. 
 Here we mount the current working directory (using $pwd) and use this as the output directory, 
 the input file should be reachable from this directory as well. The path to the infile and outfile
-directories should be relative to the monuted current working directory.
+directories should be relative to the mounted current working directory.
 
 
 `-i INPUTFILE	input file (fasta or fastq) relative to pwd, up to 2 files`

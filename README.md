@@ -90,6 +90,13 @@ directories should be relative to the mounted current working directory.
 
 `-t THRESHOLD set threshold for mininum blast identity`
 
+`-tmp TMP_DIR   temporary directory for storage of the results from the external software`
+
+`-x    extended output: Give extented output with allignment files, template and query hits in fasta and a tab seperated file with allele profile results`
+
+`-q    don't show results `
+
+
 
 ## Web-server
 

@@ -20,7 +20,8 @@ isolates of bacteria.
 
 ## Installation
 
-Setting up PlasmidFinder program
+Setting up PlasmidFinder program.
+**Warning:** Due to bugs in Biopython, do not use the Biopython version 1.74 if not using Python 3.7.
 ```bash
 # Go to wanted location for plasmidfinder
 cd /path/to/some/dir

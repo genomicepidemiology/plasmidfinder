@@ -17,7 +17,7 @@ RUN apt-get update -qq; \
 ENV DEBIAN_FRONTEND Teletype
 
 # Install python dependencies
-RUN pip3 install -U biopython tabulate cgecore==1.3.6;
+RUN pip3 install -U biopython==1.73 tabulate cgecore==1.3.6;
 
 # Install kma 
 RUN git clone --branch 1.0.1 --depth 1 https://bitbucket.org/genomicepidemiology/kma.git; \

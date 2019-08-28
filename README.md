@@ -20,8 +20,7 @@ isolates of bacteria.
 
 ## Installation
 
-Setting up PlasmidFinder program.
-**Warning:** Due to bugs in Biopython, do not use the Biopython version 1.74 if not using Python 3.7.
+Setting up PlasmidFinder program
 ```bash
 # Go to wanted location for plasmidfinder
 cd /path/to/some/dir
@@ -74,7 +73,7 @@ When running the docker file you have to mount 2 directories:
  2. An output/input folder from where the input file can be reached and an output files can be saved. 
 Here we mount the current working directory (using $pwd) and use this as the output directory, 
 the input file should be reachable from this directory as well. The path to the infile and outfile
-directories should be relative to the mounted current working directory.
+directories should be relative to the monuted current working directory.
 
 
 `-i INPUTFILE	input file (fasta or fastq) relative to pwd, up to 2 files`
@@ -90,13 +89,6 @@ directories should be relative to the mounted current working directory.
 `-l MIN_COV    set threshold for minimum coverage`
 
 `-t THRESHOLD set threshold for mininum blast identity`
-
-`-tmp TMP_DIR   temporary directory for storage of the results from the external software`
-
-`-x    extended output: Give extented output with allignment files, template and query hits in fasta and a tab seperated file with allele profile results`
-
-`-q    don't show results `
-
 
 
 ## Web-server

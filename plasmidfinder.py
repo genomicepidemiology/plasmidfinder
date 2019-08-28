@@ -5,112 +5,135 @@ from tabulate import tabulate
 from cgecore.blaster import Blaster
 from cgecore.cgefinder import CGEFinder
 from distutils.spawn import find_executable
-import sys, os, time, re, subprocess
-import json, gzip, pprint
+import sys
+import os
+import time
+import re
+import subprocess
+import json
+import gzip
+import pprint
+
+##########################################################################
+# TODO list
+##########################################################################
+# 1) A lot of output files are opened while creating output and not closed
+#    until the end. This creates unecessary I/O pressure on the servers.
+#    SOLUTION: create output in string variables and write all output to
+#    each file only once.
 
 ##########################################################################
 # FUNCTIONS
 ##########################################################################
+
+
 def text_table(headers, rows, empty_replace='-'):
-   ''' Create text table
-   
-   USAGE:
-      >>> from tabulate import tabulate
-      >>> headers = ['A','B']
-      >>> rows = [[1,2],[3,4]]
-      >>> print(text_table(headers, rows))
-      **********
-        A    B
-      **********
-        1    2
-        3    4
-      ==========
-   '''
-   # Replace empty cells with placeholder
-   rows = [[x if x else empty_replace for x in row] for row in rows]
-   # Create table
-   table = tabulate(rows, headers, tablefmt='simple').split('\n')
-   # Prepare title injection
-   width = len(table[0])
-   # Switch horisontal line
-   table[1] = '*'*(width+2)
-   # Update table with title
-   table = ("%s\n"*3)%('*'*(width+2), '\n'.join(table), '='*(width+2))
-   return table
+    ''' Create text table
+
+    USAGE:
+        >>> from tabulate import tabulate
+        >>> headers = ['A','B']
+        >>> rows = [[1,2],[3,4]]
+        >>> print(text_table(headers, rows))
+        **********
+          A     B
+        **********
+          1     2
+          3     4
+        ==========
+    '''
+    # Replace empty cells with placeholder
+    rows = map(lambda row: map(lambda x: x if x else empty_replace, row), rows)
+    # Create table
+    table = tabulate(rows, headers, tablefmt='simple').split('\n')
+    # Prepare title injection
+    width = len(table[0])
+    # Switch horisontal line
+    table[1] = '*' * (width + 2)
+    # Update table with title
+    table = (("%s\n" * 3)
+             % ('*' * (width + 2), '\n'.join(table), '=' * (width + 2)))
+    return table
+
 
 def is_gzipped(file_path):
-   ''' Returns True if file is gzipped and False otherwise.
-       The result is inferred from the first two bits in the file read
-       from the input path.
-       On unix systems this should be: 1f 8b
-       Theoretically there could be exceptions to this test but it is
-       unlikely and impossible if the input files are otherwise expected
-       to be encoded in utf-8.
-   '''
-   with open(file_path, mode='rb') as fh:
-      bit_start = fh.read(2)
-   if(bit_start == b'\x1f\x8b'):
-      return True
-   else:
-      return False
+    ''' Returns True if file is gzipped and False otherwise.
+         The result is inferred from the first two bits in the file read
+         from the input path.
+         On unix systems this should be: 1f 8b
+         Theoretically there could be exceptions to this test but it is
+         unlikely and impossible if the input files are otherwise expected
+         to be encoded in utf-8.
+    '''
+    with open(file_path, mode='rb') as fh:
+        bit_start = fh.read(2)
+    if(bit_start == b'\x1f\x8b'):
+        return True
+    else:
+        return False
+
 
 def get_file_format(input_files):
-   """
-   Takes all input files and checks their first character to assess
-   the file format. Returns one of the following strings; fasta, fastq, 
-   other or mixed. fasta and fastq indicates that all input files are 
-   of the same format, either fasta or fastq. other indiates that all
-   files are not fasta nor fastq files. mixed indicates that the inputfiles
-   are a mix of different file formats.
-   """
+    """
+    Takes all input files and checks their first character to assess
+    the file format. Returns one of the following strings; fasta, fastq,
+    other or mixed. fasta and fastq indicates that all input files are
+    of the same format, either fasta or fastq. other indiates that all
+    files are not fasta nor fastq files. mixed indicates that the inputfiles
+    are a mix of different file formats.
+    """
 
-   # Open all input files and get the first character
-   file_format = []
-   invalid_files = []
-   for infile in input_files:
-      if is_gzipped(infile):#[-3:] == ".gz":
-         f = gzip.open(infile, "rb")
-         fst_char = f.read(1);
-      else:
-         f = open(infile, "rb")
-         fst_char = f.read(1);
-      f.close()
-      # Assess the first character
-      if fst_char == b"@":
-         file_format.append("fastq")
-      elif fst_char == b">":
-         file_format.append("fasta")
-      else:
-         invalid_files.append("other")
-   if len(set(file_format)) != 1:
-      return "mixed"
-   return ",".join(set(file_format))
+    # Open all input files and get the first character
+    file_format = []
+    invalid_files = []
+    for infile in input_files:
+        if is_gzipped(infile):
+            f = gzip.open(infile, "rb")
+            fst_char = f.read(1)
+        else:
+            f = open(infile, "rb")
+            fst_char = f.read(1)
+        f.close()
+        # Assess the first character
+        if fst_char == b"@":
+            file_format.append("fastq")
+        elif fst_char == b">":
+            file_format.append("fasta")
+        else:
+            invalid_files.append("other")
+    if len(set(file_format)) != 1:
+        return "mixed"
+    return ",".join(set(file_format))
+
 
 def make_aln(file_handle, json_data, query_aligns, homol_aligns, sbjct_aligns):
-   for dbs_info in json_data.values():
-      for db_name, db_info in dbs_info.items():
-         if isinstance(db_info, str):
-            continue
-         for gene_id, gene_info in sorted(db_info.items(), key=lambda  x: (x[1]['plasmid'], x[1]['accession'])):  
-            seq_name = gene_info["plasmid"] + "_" + gene_info["accession"]
-            hit_name = gene_info["hit_id"]
+    for dbs_info in json_data.values():
+        for db_name, db_info in dbs_info.items():
+            if isinstance(db_info, str):
+                continue
 
-            seqs = ["","",""]
-            seqs[0] = sbjct_aligns[db_name][hit_name]    
-            seqs[1] = homol_aligns[db_name][hit_name]    
-            seqs[2] = query_aligns[db_name][hit_name]
+            for gene_id, gene_info in sorted(db_info.items(),key=lambda x: (x[1]['plasmid'], x[1]['accession'])):
 
-            write_align(seqs, seq_name, file_handle)
+                seq_name = gene_info["plasmid"] + "_" + gene_info["accession"]
+                hit_name = gene_info["hit_id"]
+
+                seqs = ["", "", ""]
+                seqs[0] = sbjct_aligns[db_name][hit_name]
+                seqs[1] = homol_aligns[db_name][hit_name]
+                seqs[2] = query_aligns[db_name][hit_name]
+
+                write_align(seqs, seq_name, file_handle)
+
 
 def write_align(seq, seq_name, file_handle):
-   file_handle.write("# {}".format(seq_name) + "\n")
-   sbjct_seq = seq[0]
-   homol_seq = seq[1]
-   query_seq = seq[2]
-   for i in range(0,len(sbjct_seq),60):
-      file_handle.write("%-10s\t%s\n"%("template:", sbjct_seq[i:i+60]))
-      file_handle.write("%-10s\t%s\n"%("", homol_seq[i:i+60]))
-      file_handle.write("%-10s\t%s\n\n"%("query:", query_seq[i:i+60]))
+    file_handle.write("# {}".format(seq_name) + "\n")
+    sbjct_seq = seq[0]
+    homol_seq = seq[1]
+    query_seq = seq[2]
+    for i in range(0, len(sbjct_seq), 60):
+        file_handle.write("%-10s\t%s\n" % ("template:", sbjct_seq[i:i + 60]))
+        file_handle.write("%-10s\t%s\n" % ("", homol_seq[i:i + 60]))
+        file_handle.write("%-10s\t%s\n\n" % ("query:", query_seq[i:i + 60]))
 
 
 ##########################################################################
@@ -118,18 +141,48 @@ def write_align(seq, seq_name, file_handle):
 ##########################################################################
 
 parser = ArgumentParser()
-parser.add_argument("-i", "--infile", dest="infile", help="FASTA or FASTQ input files.", nargs = "+")
-parser.add_argument("-o", "--outputPath", dest="outdir",help="Path to blast output", default='.')
-parser.add_argument("-tmp", "--tmp_dir", help="Temporary directory for storage of the results from the external software.")
-parser.add_argument("-mp", "--methodPath", dest="method_path",help="Path to method to use (kma or blastn)")
-parser.add_argument("-p", "--databasePath", dest="db_path",help="Path to the databases", default='/database')
-parser.add_argument("-d", "--databases", dest="databases",help="Databases chosen to search in - if non is specified all is used")
-parser.add_argument("-l", "--mincov", dest="min_cov",help="Minimum coverage", default=0.60)
-parser.add_argument("-t", "--threshold", dest="threshold",help="Minimum threshold for identity", default=0.90)
+parser.add_argument("-i", "--infile",
+                    help="FASTA or FASTQ input files.",
+                    nargs="+",
+                    required=True)
+parser.add_argument("-o", "--outputPath",
+                    dest="outdir",
+                    help="Path to blast output",
+                    default='.')
+parser.add_argument("-tmp", "--tmp_dir",
+                    help=("Temporary directory for storage of the results "
+                          "from the external software."))
+parser.add_argument("-mp", "--methodPath",
+                    dest="method_path",
+                    help="Path to method to use (kma or blastn)")
+parser.add_argument("-p", "--databasePath",
+                    dest="db_path",
+                    help="Path to the databases",
+                    default='/database')
+parser.add_argument("-d", "--databases",
+                    help=("Databases chosen to search in - if non is "
+                          "specified all is used"))
+parser.add_argument("-l", "--mincov",
+                    dest="min_cov",
+                    help="Minimum coverage",
+                    default=0.60)
+parser.add_argument("-t", "--threshold",
+                    dest="threshold",
+                    help="Minimum hreshold for identity",
+                    default=0.90)
 parser.add_argument("-x", "--extented_output",
-                    help="Give extented output with allignment files, template and query hits in fasta and\
-                          a tab seperated file with allele profile results", action="store_true")
-parser.add_argument("-q", "--quiet", action="store_true")
+                    help=("Give extented output with allignment files, "
+                          "template and query hits in fasta and a tab "
+                          "seperated file with gene profile results"),
+                    action="store_true")
+parser.add_argument("--speciesinfo_json",
+                    help=("Argument used by the cge pipeline. It takes a list"
+                          " in json format consisting of taxonomy, from "
+                          "domain -> species. A database is chosen based on "
+                          "the taxonomy."),
+                    default=None)
+parser.add_argument("-q", "--quiet",
+                    action="store_true")
 
 args = parser.parse_args()
 
@@ -138,8 +191,8 @@ args = parser.parse_args()
 ##########################################################################
 
 if args.quiet:
-   f = open('/dev/null', 'w')
-   sys.stdout = f
+    f = open('/dev/null', 'w')
+    sys.stdout = f
 
 # Defining varibales
 min_cov = float(args.min_cov)
@@ -148,213 +201,261 @@ method_path = args.method_path
 
 # Check if valid database is provided
 if args.db_path is None:
-      sys.exit("Input Error: No database directory was provided!\n")
+    sys.exit("Input Error: No database directory was provided!\n")
 elif not os.path.exists(args.db_path):
-   sys.exit("Input Error: The specified database directory does not"
-                       " exist!\n")
+    sys.exit("Input Error: The specified database directory does not exist!\n")
 else:
-   # Check existence of config file
-   db_config_file = '%s/config'%(args.db_path)
-   if not os.path.exists(db_config_file):
-      sys.exit("Input Error: The database config file could not be "
-                          "found!")
-   db_path = args.db_path
+    # Check existence of config file
+    db_config_file = '%s/config' % (args.db_path)
+    if not os.path.exists(db_config_file):
+        sys.exit("Input Error: The database config file could not be found!")
+    db_path = args.db_path
 
 # Check if valid input files are provided
 if args.infile is None:
-   sys.exit("Input Error: No input file was provided!\n")
+    sys.exit("Input Error: No input file was provided!\n")
 elif not os.path.exists(args.infile[0]):
-   sys.exit("Input Error: Input file does not exist!\n")
+    sys.exit("Input Error: Input file does not exist!\n")
 elif len(args.infile) > 1:
-   if not os.path.exists(args.infile[1]):
-      sys.exit("Input Error: Input file does not exist!\n")
-   infile = args.infile
-else:   
-   infile = args.infile
+    if not os.path.exists(args.infile[1]):
+        sys.exit("Input Error: Input file does not exist!\n")
+    infile = args.infile
+else:
+    infile = args.infile
 
 # Check if valid output directory is provided
 if not os.path.exists(args.outdir):
-   sys.exit("Input Error: Output dirctory does not exist!\n")
+    sys.exit("Input Error: Output dirctory does not exist!\n")
 outdir = os.path.abspath(args.outdir)
 
 # Check if valid tmp directory is provided
 if args.tmp_dir:
-   if not os.path.exists(args.tmp_dir):
-      sys.exit("Input Error: Tmp dirctory, {}, does not exist!\n".format(args.tmp_dir))
-   else:
-      tmp_dir = os.path.abspath(args.tmp_dir)
+    if not os.path.exists(args.tmp_dir):
+        sys.exit("Input Error: Tmp dirctory, {}, does not exist!\n"
+                 .format(args.tmp_dir))
+    else:
+        tmp_dir = os.path.abspath(args.tmp_dir)
 else:
-   tmp_dir = outdir
+    tmp_dir = outdir
 
 # Check if databases and config file are correct/correponds
-dbs = dict()
+dbs = {}
 extensions = []
+db_description = {}
+tax_2_db = {}
 with open(db_config_file) as f:
-   for l in f:
-      l = l.strip()
-      if l == '': continue
-      if l[0] == '#':
-         if 'extensions:' in l:
-            extensions = [s.strip() for s in l.split('extensions:')[-1].split(',')]
-         continue
-      tmp = l.split('\t')
-      if len(tmp) != 3:
-         sys.exit(("Input Error: Invalid line in the database"
-                              " config file!\nA proper entry requires 3 tab "
-                              "separated columns!\n%s")%(l))
-      db_prefix = tmp[0].strip()
-      name = tmp[1].split('#')[0].strip()
+    for i in f:
+        i = i.strip()
+        if i == '':
+            continue
+        if i[0] == '#':
+            if 'extensions:' in i:
+                extensions = [
+                    s.strip() for s in i.split('extensions:')[-1].split(',')]
+            continue
+        tmp = i.split('\t')
+        if len(tmp) != 3:
+            sys.exit(("Input Error: Invalid line in the database"
+                      " config file!\nA proper entry requires 3 tab "
+                      "separated columns!\n%s") % (i))
+        db_prefix = tmp[0].strip()
+        name = tmp[1].split('#')[0].strip()
+        description = tmp[2]
 
-      # Check if all db files are present
-      for ext in extensions:
-         db = "%s/%s.%s"%(db_path, db_prefix, ext)
-         if not os.path.exists(db):
-            sys.exit(("Input Error: The database file (%s) "
-                                 "could not be found!")%(db))
-      if db_prefix not in dbs: dbs[db_prefix] = []
-      dbs[db_prefix].append(name)
+        # Check if all db files are present
+        for ext in extensions:
+            db = "%s/%s.%s" % (db_path, db_prefix, ext)
+            if not os.path.exists(db):
+                sys.exit(("Input Error: The database file (%s) "
+                          "could not be found!") % (db))
+        if db_prefix not in dbs:
+            dbs[db_prefix] = []
+        dbs[db_prefix].append(name)
+        db_description[db_prefix] = description
+
+        # Create database, where keys are from column 2 in config file (species
+        # or other taxonomy). Values are lists of databases belonging to the
+        # species or "group".
+        taxdbs = tax_2_db.get(name.lower(), [])
+        taxdbs.append(db_prefix)
+        tax_2_db[name.lower()] = taxdbs
 if len(dbs) == 0:
-   sys.exit("Input Error: No databases were found in the "
-            "database config file!")
+    sys.exit("Input Error: No databases were found in the "
+             "database config file!")
 
-if args.databases is None:
-   # Choose all available databases from the config file
-   databases = dbs.keys()
+if args.speciesinfo_json:
+    databases = None
+    taxonomy = tuple(json.loads(args.speciesinfo_json))
+    for tax in reversed(taxonomy):
+        if tax in tax_2_db:
+            databases = tax_2_db[tax]
+            break
+    if databases is None:
+        databases = databases = dbs.keys()
+elif args.databases is None:
+    # Choose all available databases from the config file
+    databases = dbs.keys()
 else:
-   # Handle multiple databases
-   args.databases = args.databases.split(',')
+    # Handle multiple databases
+    args.databases = args.databases.split(',')
 
-   # Check that the ResFinder DBs are valid
-   databases = []
-   for db_prefix in args.databases:
-      if db_prefix in dbs:
-         databases.append(db_prefix)
-      else:
-         sys.exit("Input Error: Provided database was not "
-                  "recognised! (%s)\n"%db_prefix)
+    # Check that the ResFinder DBs are valid
+    databases = []
+    for db_prefix in args.databases:
+        if db_prefix in dbs:
+            databases.append(db_prefix)
+        else:
+            sys.exit("Input Error: Provided database was not "
+                     "recognised! (%s)\n" % db_prefix)
 
-species = [",".join(dbs[db]) for db in databases]
-
+species = set([",".join(dbs[db]) for db in databases])
 
 # Check file format (fasta, fastq or other format)
 file_format = get_file_format(infile)
 
-# Call appropriate method (kma or blastn) based on file format 
+# Call appropriate method (kma or blastn) based on file format
 if file_format == "fastq":
-   if not method_path:
-      method_path = "kma"
-   if find_executable(method_path) == None:
-      sys.exit("No valid path to a kma program was provided. Use the -mp flag to provide the path.")
+    if not method_path:
+        method_path = "kma"
+    if find_executable(method_path) is None:
+        sys.exit("No valid path to a kma program was provided. Use the -mp "
+                 "flag to provide the path.")
 
-   # Check the number of files
-   if len(infile) == 1:
-      infile_1 = infile[0]
-      infile_2 = None
-   elif len(infile) == 2:
-      infile_1 = infile[0]
-      infile_2 = infile[1]
-   else:
-      sys.exit("Only 2 input file accepted for raw read data,\
-                if data from more runs is avaliable for the same\
-                sample, please concatinate the reads into two files")
-    
-   sample_name = os.path.basename(sorted(args.infile)[0])
-   method = "kma"
+    # Check the number of files
+    if len(infile) == 1:
+        infile_1 = infile[0]
+        infile_2 = None
+    elif len(infile) == 2:
+        infile_1 = infile[0]
+        infile_2 = infile[1]
+    else:
+        sys.exit("Only 2 input file accepted for raw read data,\
+                     if data from more runs is avaliable for the same\
+                     sample, please concatinate the reads into two files")
 
-   # Call KMA
-   method_obj = CGEFinder.kma(infile_1, tmp_dir, databases, db_path, min_cov=min_cov,
-                              threshold=threshold, kma_path=method_path, sample_name=sample_name,
-                              inputfile_2=infile_2, kma_mrs=0.75, kma_gapopen=-5,
-                              kma_gapextend=-1, kma_penalty=-3, kma_reward=1)
+    sample_name = os.path.basename(sorted(args.infile)[0])
+    method = "kma"
 
+    # Call KMA
+    method_obj = CGEFinder.kma(infile_1, tmp_dir, databases, db_path,
+                               min_cov=min_cov, threshold=threshold,
+                               kma_path=method_path, sample_name=sample_name,
+                               inputfile_2=infile_2, kma_mrs=0.75,
+                               kma_gapopen=-5, kma_gapextend=-1,
+                               kma_penalty=-3, kma_reward=1)
 elif file_format == "fasta":
-   if not method_path:
-      method_path = "blastn"
-   if find_executable(method_path) == None:
-      sys.exit("No valid path to a blastn program was provided. Use the -mp flag to provide the path.")
+    if not method_path:
+        method_path = "blastn"
+    if find_executable(method_path) is None:
+        sys.exit("No valid path to a blastn program was provided. Use the "
+                 "-mp flag to provide the path.")
 
-   # Assert that only one fasta file is inputted
-   assert len(infile) == 1, "Only one input file accepted for assembled data"
-   infile = infile[0]
-   method = "blast"
+    # Assert that only one fasta file is inputted
+    assert len(infile) == 1, "Only one input file accepted for assembled data"
+    infile = infile[0]
+    method = "blast"
 
-   # Call BLASTn
-   method_obj = Blaster(infile, databases, db_path, tmp_dir, 
-                        min_cov, threshold, method_path, cut_off=False)
+    # Call BLASTn
+    method_obj = Blaster(infile, databases, db_path, tmp_dir,
+                         min_cov, threshold, method_path, cut_off=False)
 else:
-   sys.exit("Input file must be fastq or fasta format, not "+ file_format)
+    sys.exit("Input file must be fastq or fasta format, not " + file_format)
 
-results      = method_obj.results
+results = method_obj.results
 query_aligns = method_obj.gene_align_query
-homo_aligns  = method_obj.gene_align_homo
+homo_aligns = method_obj.gene_align_homo
 sbjct_aligns = method_obj.gene_align_sbjct
 
 json_results = dict()
 
+
 hits = []
 
 for db in results:
-   contig_res = {}
-   if db == 'excluded':
-      continue
-   db_name = str(dbs[db][0])
-   if db_name not in json_results:
-      json_results[db_name] = {}
+    contig_res = {}
+    if db == 'excluded':
+        continue
+    db_name = str(dbs[db][0])
+    if db_name not in json_results:
+        json_results[db_name] = {}
+    if db not in json_results[db_name]:
+        json_results[db_name][db] = {}
+    if results[db] == "No hit found":
+        json_results[db_name][db] = "No hit found"
+    else:
+        for contig_id, hit in results[db].items():
 
-   if db not in json_results[db_name]: 
-      json_results[db_name][db] = {}
+            identity = float(hit["perc_ident"])
+            coverage = float(hit["perc_coverage"])
 
-   if results[db] == "No hit found":
-      json_results[db_name][db] = "No hit found"
-   else:
-      for contig_id, hit in results[db].items():
+            # Skip hits below coverage
+            if coverage < (min_cov * 100) or identity < (threshold * 100):
+                continue
 
-         identity = float(hit["perc_ident"])
-         coverage = float(hit["perc_coverage"])
+            bit_score = identity * coverage
 
-         # Skip hits below coverage
-         if coverage < (min_cov*100) or identity < (threshold*100):
-            continue
+            if contig_id not in contig_res:
+                contig_res[contig_id] = []
+            contig_res[contig_id].append([hit["query_start"], hit["query_end"],
+                                         bit_score, hit])
 
-         bit_score = identity * coverage
+    # Check for overlapping hits, only report the best
+    for contig_id, hit_lsts in contig_res.items():
 
-         if contig_id not in contig_res:
-            contig_res[contig_id] = []
-         contig_res[contig_id].append([hit["query_start"], hit["query_end"], bit_score, hit])
+        hit_lsts.sort(key=lambda x: x[0])
+        hits = [hit[3] for hit in hit_lsts]
 
-   # Check for overlapping hits, only report the best   
-   for contig_id, hit_lsts in contig_res.items():
+        for hit in hits:
+            header = hit["sbjct_header"]
 
-      hit_lsts.sort(key=lambda x: x[0])
-      hits = [hit[3] for hit in hit_lsts]
+            tmp = header.split("_")
+            try:
+                gene = tmp[0]
+                note = tmp[2]
+                acc = "".join(tmp[3:])
+            except IndexError:
+                gene = tmp
+                note = ""
+                acc = ""
+            try:
+                variant = tmp[3]
+            except IndexError:
+                variant = ""
 
-      for hit in hits:
-         header = hit["sbjct_header"]
+            identity = hit["perc_ident"]
+            coverage = hit["perc_coverage"]
+            sbj_length = hit["sbjct_length"]
+            HSP = hit["HSP_length"]
+            positions_contig = "%s..%s" % (hit["query_start"],
+                                           hit["query_end"])
+            positions_ref = "%s..%s" % (hit["sbjct_start"], hit["sbjct_end"])
+            contig_name = hit["contig_name"]
 
-         tmp = header.split("_")
-         try:
-            gene = tmp[0]
-            note = tmp[2]
-            acc = "".join(tmp[3:])
-         except IndexError:
-            gene = tmp
-            note = ""
-            acc = ""
-         identity = hit["perc_ident"]
-         coverage = hit["perc_coverage"]
-         sbj_length = hit["sbjct_length"]
-         HSP = hit["HSP_length"]
-         positions_contig = "%s..%s"%(hit["query_start"], hit["query_end"])
-         positions_ref = "%s..%s"%(hit["sbjct_start"], hit["sbjct_end"])
-         contig_name = hit["contig_name"]
+            # Get protein function from notes_file (from virulence, not plasmid)
+#            if gene + note in func_notes:
+#                function = func_notes[gene + note].rstrip()
+#            elif gene + variant in func_notes:
+#                function = func_notes[gene + variant].rstrip()
+#            elif gene in func_notes:
+#                function = func_notes[gene].rstrip()
+#            else:
+#                function = ""
 
-         # Write JSON results dict
-         json_results[db_name][db].update({header:{}})
-         json_results[db_name][db][header] = {"plasmid":gene,"identity":round(identity, 2),"HSP_length":HSP,
-                                              "template_length":sbj_length,"position_in_ref":positions_ref,
-                                              "contig_name":contig_name,"positions_in_contig":positions_contig,
-                                              "note":note,"accession":acc, 
-                                              "coverage":round(coverage, 2), "hit_id":contig_id}
+            # Write JSON results dict
+            json_results[db_name][db].update({header: {}})
+            json_results[db_name][db][header] = {
+                "plasmid": gene,
+                "identity": round(identity, 2),
+                "HSP_length": HSP,
+                "template_length": sbj_length,
+                "position_in_ref": positions_ref,
+                "contig_name": contig_name,
+                "positions_in_contig": positions_contig,
+                "note": note,
+                "accession": acc,
+#                "protein_function": function,
+                "coverage": round(coverage, 2),
+                "hit_id": contig_id}
 
 # Get run info for JSON file
 service = os.path.basename(__file__).replace(".py", "")
@@ -362,10 +463,12 @@ date = time.strftime("%d.%m.%Y")
 time = time.strftime("%H:%M:%S")
 
 # Make JSON output file
-data = {service:{}}
+data = {service: {}}
 
-userinput = {"filename(s)":args.infile, "method":method,"file_format":file_format}
-run_info = {"date":date, "time":time}
+userinput = {"filename(s)": args.infile,
+             "method": method,
+             "file_format": file_format}
+run_info = {"date": date, "time": time}
 
 data[service]["user_input"] = userinput
 data[service]["run_info"] = run_info
@@ -374,95 +477,109 @@ data[service]["results"] = json_results
 pprint.pprint(data)
 
 # Save json output
-result_file = "{}/data.json".format(outdir) 
+result_file = "{}/data.json".format(outdir)
 with open(result_file, "w") as outfile:
-   json.dump(data, outfile)
+    json.dump(data, outfile)
 
 # Getting and writing out the results
-header = ["Plasmid", "Identity", "Query / Template length", "Contig", "Position in contig", "Note", "Accession number"]
+header = ["Plasmid", "Identity", "Query / Template length", "Contig",
+          "Position in contig", "Note", "Accession number"]
 
 if args.extented_output:
-   # Define extented output 
-   table_filename  = "{}/results_tab.tsv".format(outdir)
-   query_filename  = "{}/Hit_in_genome_seq.fsa".format(outdir)
-   sbjct_filename  = "{}/Plasmid_seqs.fsa".format(outdir)
-   result_filename = "{}/results.txt".format(outdir)
-   table_file  = open(table_filename, "w")
-   query_file  = open(query_filename, "w")
-   sbjct_file  = open(sbjct_filename, "w")
-   result_file = open(result_filename, "w")
+    # Define extented output
+    table_filename = "{}/results_tab.tsv".format(outdir)
+    query_filename = "{}/Hit_in_genome_seq.fsa".format(outdir)
+    sbjct_filename = "{}/Plasmid_seqs.fsa".format(outdir)
+    result_filename = "{}/results.txt".format(outdir)
+    table_file = open(table_filename, "w")
+    query_file = open(query_filename, "w")
+    sbjct_file = open(sbjct_filename, "w")
+    result_file = open(result_filename, "w")
 
-   # Make results file
-   result_file.write("{} Results\n\nOrganism(s): {}\n\n".format(service, ",".join(set(species))))
+    # Make results file
+    result_file.write("{} Results\n\nOrganism(s): {}\n\n"
+                      .format(service, ",".join(species)))
 
-   # Write tsv table
-   rows = [["Database"] + header]
-   for species, dbs_info in json_results.items():
-      for db_name, db_hits in dbs_info.items():
-         result_file.write("*"*len("\t".join(header)) + "\n")
-         result_file.write(",".join(dbs[db_name]) + "\n")
-         db_rows = []
+    # Write tsv table
+    rows = [["Database"] + header]
+    for species, dbs_info in json_results.items():
+        for db_name, db_hits in dbs_info.items():
+            result_file.write("*" * len("\t".join(header)) + "\n")
+            result_file.write(db_description[db_name] + "\n")
+            db_rows = []
 
-         # Check it hits are found
-         if isinstance(db_hits, str):
-            content = ['']*len(header)
-            content[int(len(header)/2)] = db_hits
-            result_file.write(text_table(header, [content]) + "\n")
-            continue
+            # Check it hits are found
+            if isinstance(db_hits, str):
+                content = [''] * len(header)
+                content[int(len(header) / 2)] = db_hits
+                result_file.write(text_table(header, [content]) + "\n")
+                continue
 
-         for gene_id, gene_info in sorted(db_hits.items(), key=lambda  x: (x[1]['plasmid'], x[1]['accession'])):
-            vir_gene = gene_info["plasmid"]
-            identity = str(gene_info["identity"])
-            coverage = str(gene_info["coverage"])
-            template_HSP = str(gene_info["HSP_length"]) + " / " + str(gene_info["template_length"])
-            position_in_ref = gene_info["position_in_ref"]
-            position_in_contig = gene_info["positions_in_contig"]
-            note = gene_info["note"]
-            acc = gene_info["accession"]
-            contig_name = gene_info["contig_name"]
+            for gene_id, gene_info in sorted(
+                    db_hits.items(),
+                    key=lambda x: (x[1]['plasmid'],
+                                   x[1]['accession'])):
 
-            # Add rows to result tables
-            db_rows.append([vir_gene, identity, template_HSP, contig_name, position_in_contig, note, acc])
-            rows.append([db_name, vir_gene, identity, template_HSP, contig_name, position_in_contig, note, acc])
+                vir_gene = gene_info["plasmid"]
+                identity = str(gene_info["identity"])
+                coverage = str(gene_info["coverage"])
 
-            # Write query fasta output
-            hit_name = gene_info["hit_id"]
-            query_seq = query_aligns[db_name][hit_name]
-            sbjct_seq = sbjct_aligns[db_name][hit_name] 
+#                template_HSP = ("{hsp_len} / {template_len}".format(hsp_len=gene_info["HSP_length"],template_len=gene_info["template_length"]))
+                template_HSP = str(gene_info["HSP_length"]) + " / " + str(gene_info["template_length"])
 
-            if coverage == 100 and identity == 100:
-               match = "PERFECT MATCH"
-            else:
-               match = "WARNING"
-            qry_header = ">{}:{} ID:{}% COV:{}% Best_match:{}\n".format(vir_gene, match, identity, 
-                                                                    coverage, gene_id)
-            query_file.write(qry_header)
-            for i in range(0,len(query_seq),60):
-               query_file.write(query_seq[i:i+60] + "\n")
+                position_in_ref = gene_info["position_in_ref"]
+                position_in_contig = gene_info["positions_in_contig"]
+                note = gene_info["note"]
+                acc = gene_info["accession"]
+                contig_name = gene_info["contig_name"]
 
-            # Write template fasta output
-            sbj_header = ">{}\n".format(gene_id)
-            sbjct_file.write(sbj_header)
-            for i in range(0,len(sbjct_seq),60):
-               sbjct_file.write(sbjct_seq[i:i+60] + "\n")
+                # Add rows to result tables
+                db_rows.append([vir_gene, identity, template_HSP, contig_name,
+                                position_in_contig, note, acc])
+                rows.append([db_name, vir_gene, identity, template_HSP,
+                             contig_name, position_in_contig, note,
+                             acc])
 
-         # Write db results tables in results file and table file
-         result_file.write(text_table(header, db_rows) + "\n")
+                # Write query fasta output
+                hit_name = gene_info["hit_id"]
+                query_seq = query_aligns[db_name][hit_name]
+                sbjct_seq = sbjct_aligns[db_name][hit_name]
 
-      result_file.write("\n")
+                if coverage == 100 and identity == 100:
+                    match = "PERFECT MATCH"
+                else:
+                    match = "WARNING"
+                qry_header = (">{}:{} ID:{}% COV:{}% Best_match:{}\n"
+                              .format(vir_gene, match, identity, coverage,
+                                      gene_id))
+                query_file.write(qry_header)
+                for i in range(0, len(query_seq), 60):
+                    query_file.write(query_seq[i:i + 60] + "\n")
 
-   for row in rows:
-      table_file.write("\t".join(row) + "\n")
+                # Write template fasta output
+                sbj_header = ">{}\n".format(gene_id)
+                sbjct_file.write(sbj_header)
+                for i in range(0, len(sbjct_seq), 60):
+                    sbjct_file.write(sbjct_seq[i:i + 60] + "\n")
 
-   # Write allignment output
-   result_file.write("\n\nExtended Output:\n\n")
-   make_aln(result_file, json_results, query_aligns, homo_aligns, sbjct_aligns)
+            # Write db results tables in results file and table file
+            result_file.write(text_table(header, db_rows) + "\n")
+
+        result_file.write("\n")
+
+    for row in rows:
+        table_file.write("\t".join(row) + "\n")
+
+    # Write allignment output
+    result_file.write("\n\nExtended Output:\n\n")
+    make_aln(result_file, json_results, query_aligns, homo_aligns,
+             sbjct_aligns)
 
     # Close all files
-   query_file.close()
-   sbjct_file.close()
-   table_file.close()
-   result_file.close()
+    query_file.close()
+    sbjct_file.close()
+    table_file.close()
+    result_file.close()
 
 if args.quiet:
-   f.close()
+    f.close()

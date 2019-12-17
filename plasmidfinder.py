@@ -431,19 +431,9 @@ for db in results:
             positions_ref = "%s..%s" % (hit["sbjct_start"], hit["sbjct_end"])
             contig_name = hit["contig_name"]
 
-            # Get protein function from notes_file (from virulence, not plasmid)
-#            if gene + note in func_notes:
-#                function = func_notes[gene + note].rstrip()
-#            elif gene + variant in func_notes:
-#                function = func_notes[gene + variant].rstrip()
-#            elif gene in func_notes:
-#                function = func_notes[gene].rstrip()
-#            else:
-#                function = ""
-
             # Write JSON results dict
-            json_results[db_name][db].update({header: {}})
-            json_results[db_name][db][header] = {
+            json_results[db_name][db].update({contig_id: {}})
+            json_results[db_name][db][contig_id] = {
                 "plasmid": gene,
                 "identity": round(identity, 2),
                 "HSP_length": HSP,
@@ -453,9 +443,9 @@ for db in results:
                 "positions_in_contig": positions_contig,
                 "note": note,
                 "accession": acc,
-#                "protein_function": function,
                 "coverage": round(coverage, 2),
-                "hit_id": contig_id}
+                "hit_id": contig_id,
+                "gene_header":header}
 
 # Get run info for JSON file
 service = os.path.basename(__file__).replace(".py", "")

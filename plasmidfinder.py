@@ -461,7 +461,7 @@ userinput = {"filename(s)": args.infile,
              "method": method,
              "file_format": file_format}
 run_info = {"date": date, "time": time}
-
+json_results=dict(sorted(json_results.items(), key=lambda x: x[0].lower()))l
 data[service]["user_input"] = userinput
 data[service]["run_info"] = run_info
 data[service]["results"] = json_results

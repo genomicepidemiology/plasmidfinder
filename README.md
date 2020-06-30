@@ -54,6 +54,28 @@ python3 INSTALL.py kma_index
 If kma_index has no bin install please install kma_index from the kma repository:
 https://bitbucket.org/genomicepidemiology/kma
 
+## Dependencies
+In order to run the program without using docker, Python 3.5 (or newer) should be installed along with the following versions of the modules (or newer).
+
+#### Modules
+- cgecore 1.5.5
+- tabulate 0.7.7
+
+Modules can be installed using the following command:
+```bash
+pip3 install cgecore
+```
+#### KMA and BLAST
+
+The newest version of kma and BLAST can be installed from here:
+```url
+https://bitbucket.org/genomicepidemiology/kma
+```
+
+```url
+ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/
+```
+
 ## Usage
 
 The program can be invoked with the -h option to get help and more information of the service.

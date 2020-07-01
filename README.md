@@ -61,13 +61,13 @@ In order to run the program without using docker, Python 3.5 (or newer) should b
 - cgecore 1.5.5
 - tabulate 0.7.7
 
-Modules can be installed using the following command:
+Modules can be installed using the following command with the module cgecore used as an example:
 ```bash
 pip3 install cgecore
 ```
 #### KMA and BLAST
-
-The newest version of kma and BLAST can be installed from here:
+Additionally KMA and BLAST version 2.8.1 or newer should be installed.
+The newest version of KMA and BLAST can be installed from here:
 ```url
 https://bitbucket.org/genomicepidemiology/kma
 ```

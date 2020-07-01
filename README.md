@@ -61,7 +61,7 @@ In order to run the program without using docker, Python 3.5 (or newer) should b
 - cgecore 1.5.5
 - tabulate 0.7.7
 
-Modules can be installed using the following command with the module cgecore used as an example:
+Modules can be installed using the following command. Here, the installation of the module cgecore is used as an example:
 ```bash
 pip3 install cgecore
 ```

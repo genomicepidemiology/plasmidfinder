@@ -47,4 +47,4 @@ RUN echo "alias ls='ls -h --color=tty'\n"\
 WORKDIR /workdir
 
 # Execute program when running the container
-ENTRYPOINT ["/usr/src/pasmidfinder.py"]
+ENTRYPOINT ["/usr/src/plasmidfinder.py"]

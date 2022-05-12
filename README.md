@@ -97,6 +97,8 @@ Here we mount the current working directory (using $pwd) and use this as the out
 the input file should be reachable from this directory as well. The path to the infile and outfile
 directories should be relative to the monuted current working directory.
 
+`usage: plasmidfinder.py [-h] -i INFILE [INFILE ...] [-o OUTDIR] [-tmp TMP_DIR] [-mp METHOD_PATH] [-p DB_PATH] [-d DATABASES] [-l MIN_COV] [-t THRESHOLD] [-x]
+                        [--speciesinfo_json SPECIESINFO_JSON] [-q]`
 
 `-i INPUTFILE	input file (fasta or fastq) relative to pwd, up to 2 files`
 

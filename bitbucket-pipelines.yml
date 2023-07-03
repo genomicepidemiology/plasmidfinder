@@ -1,0 +1,8 @@
+clone:
+  depth: full
+pipelines:
+  custom:
+    plasmidfinder-mirror-to-github:
+      - step:
+          script:
+            - git push --mirror git@github.com:genomicepidemiology/plasmidfinder

@@ -1,0 +1,19 @@
+name: conda-linux-release
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+jobs:
+  conda-linux:
+    name: Linux Upload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: publish-to-conda-linux
+        uses: paskino/conda-package-publish-action@master
+        with:
+          subDir: 'conda'
+          channels: '-c conda-forge -c bioconda -c defaults'
+          AnacondaToken: ${{ secrets.GENOMICEPIDEMIOLOGY_CONDA_AUTH_TOKEN }}
+          publish: true

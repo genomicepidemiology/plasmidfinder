@@ -1,0 +1,77 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '*' # Push events to matching v*, i.e. v1.0, v20.15.10
+name: conda publish
+
+jobs:
+  conda-osx:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ macos-latest ]
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+
+      - name: Make conda yaml
+        run: |
+          pip install PyYAML
+          pip install ruamel.yaml
+          python conda/make_conda.py
+
+      - uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: envs/osx-build.yml
+
+      - name: build conda package
+        run: |
+          conda install -c anaconda anaconda-client
+          conda mambabuild conda -c conda-forge -c genomicepidemiology -c bioconda -c defaults --output-folder .
+
+      - name: upload conda package
+        run: |
+          anaconda -t ${{ secrets.GENOMICEPIDEMIOLOGY_CONDA_AUTH_TOKEN }} upload --label main osx/*.tar.bz2
+
+  conda-linux:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+
+      - name: Make conda yaml
+        run: |
+          pip install PyYAML
+          pip install ruamel.yaml
+          python conda/make_conda.py
+
+      - uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: envs/linux-build.yml
+
+      - name: build conda package
+        run: |
+          conda install -c anaconda anaconda-client
+          conda mambabuild conda -c conda-forge -c genomicepidemiology -c bioconda -c defaults --output-folder .
+
+      - name: upload conda package
+        run: |
+          anaconda -t ${{ secrets.GENOMICEPIDEMIOLOGY_CONDA_AUTH_TOKEN }} upload --label main linux-64/*.tar.bz2

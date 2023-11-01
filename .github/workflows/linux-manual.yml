@@ -25,7 +25,6 @@ jobs:
           pip install PyYAML
           pip install ruamel.yaml
           python conda/make_conda.py
-          cat conda/meta.yaml
 
       - uses: mamba-org/setup-micromamba@v1
         with:

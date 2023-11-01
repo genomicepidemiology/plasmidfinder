@@ -1,6 +1,7 @@
-import ruamel.yaml as yaml
+import ruamel.yaml
 
 # Create an ordered dictionary for each section
+yaml = ruamel.yaml.YAML(typ='safe', pure=True)
 package = yaml.comments.CommentedMap()
 package['name'] = 'plasmidfinder'
 package['version'] = '2.1.6'
@@ -34,7 +35,6 @@ data['requirements'] = requirements
 data['about'] = about
 data['extra'] = extra
 
-yaml = yaml.YAML(typ='unsafe', pure=True)
 # Serialize the data to YAML and print it
 yaml_str = yaml.dump(data, Dumper=yaml.RoundTripDumper).replace("\"{{", "{{").replace("}}\"", "}}")
 print(yaml_str)

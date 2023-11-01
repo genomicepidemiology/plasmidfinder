@@ -36,7 +36,7 @@ data['extra'] = extra
 
 # Serialize the data to YAML and print it
 yaml = ruamel.yaml.YAML(typ='safe', pure=True)
-yaml_str = yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper).replace("\"{{", "{{").replace("}}\"", "}}")
+yaml_str = yaml.dump_all(data, Dumper=ruamel.yaml.RoundTripDumper).replace("\"{{", "{{").replace("}}\"", "}}")
 print(yaml_str)
 
 with open('conda/meta.yaml', 'w') as f:

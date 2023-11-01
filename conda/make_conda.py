@@ -34,7 +34,7 @@ data['requirements'] = requirements
 data['about'] = about
 data['extra'] = extra
 
-yaml = YAML(typ='unsafe', pure=True)
+yaml = yaml(typ='unsafe', pure=True)
 # Serialize the data to YAML and print it
 yaml_str = yaml.dump(data, Dumper=yaml.RoundTripDumper).replace("\"{{", "{{").replace("}}\"", "}}")
 print(yaml_str)

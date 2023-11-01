@@ -1,3 +1,4 @@
+import sys
 import ruamel.yaml
 
 # Create an ordered dictionary for each section
@@ -36,7 +37,7 @@ data['extra'] = extra
 
 # Serialize the data to YAML and print it
 yaml = ruamel.yaml.YAML(typ='safe', pure=True)
-yaml_str = yaml.dump(data).replace("\"{{", "{{").replace("}}\"", "}}")
+yaml_str = yaml.dump(data, sys.stdout).replace("\"{{", "{{").replace("}}\"", "}}")
 print(yaml_str)
 
 with open('conda/meta.yaml', 'w') as f:

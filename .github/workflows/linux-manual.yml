@@ -33,7 +33,7 @@ jobs:
       - name: build conda package
         run: |
           conda install -c anaconda anaconda-client
-          conda mambabuild conda -c conda-forge -c genomicepidemiology -c defaults --output-folder .
+          conda mambabuild conda -c conda-forge --output-folder .
 
       - name: upload conda package
         run: |

@@ -11,7 +11,7 @@ source['url'] = 'https://bitbucket.org/genomicepidemiology/plasmidfinder/get/2.1
 
 build = ruamel.yaml.comments.CommentedMap()
 build['number'] = 1
-build['noarch'] = 'generic'
+#build['noarch'] = 'generic'
 
 requirements = ruamel.yaml.comments.CommentedMap()
 requirements['host'] = ['python>=3.5', 'wget', 'kma']
